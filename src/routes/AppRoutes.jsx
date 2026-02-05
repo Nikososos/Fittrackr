@@ -10,13 +10,13 @@ import SettingsPage from "../pages/settings/SettingsPage"
 export default function AppRoutes() {
     return (
         <Routes>
-            <route path="/login" element={<LoginPage />} />
-            <route path="/" element={<DashboardPage />} />
-            <route path="/exercises" element={<ExcercisesPage />} />
-            <route path="/workouts" element={<WorkoutsPage />} />
-            <route path="/workouts/:id" element={<WorkoutsBuilderPage />} />
-            <route path="/progress" element={<ProgressPage />} />
-            <route path="/settings" element={<SettingsPage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/" element={<DashboardPage />} />
+            <Route path="/exercises" element={<ExcercisesPage />} />
+            <Route path="/workouts" element={<WorkoutsPage />} />
+            <Route path="/workouts/:id" element={<WorkoutsBuilderPage />} />
+            <Route path="/progress" element={<ProgressPage />} />
+            <Route path="/settings" element={<SettingsPage />} />
         </Routes>
     );
 }
