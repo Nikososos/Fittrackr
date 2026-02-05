@@ -62,6 +62,17 @@ export default function LoginPage() {
                     <label className="fieldLabel" htmlFor="password">
                         Password
                     </label>
+                    <input
+                        id="password"
+                        className="textInput"
+                        type="password"
+                        placeholder="*******"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        autoComplete="current-password"
+                    />
+
+                    {error && <div classname="errorbanner">{error}</div>}
 
                 </form>
 
