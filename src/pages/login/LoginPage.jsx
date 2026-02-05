@@ -13,5 +13,8 @@ export default function LoginPage() {
     const [error, setError] = useState("");
     const [isLoading, setIsLoading] = useState(false);
 
-    
+    async function handleSubmit(e) {
+        e.preventDefault();
+        setError("");
+    }
 }
