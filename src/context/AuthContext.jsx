@@ -15,4 +15,17 @@ export function Authprovider({ children }) {
         setToken(newToken);
         localStorage.setItem("token", newtoken);
     };
+
+    const value = useMemo(
+        () => ({token, isAuthenticated, login, logout }),
+        [token, isAuthenticated]
+    );
+
+    return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+}
+
+export function useAuth() {
+    const ctx = useContext(AuthContext);
+    if (!ctx) throw new Error ("useAuth must be used within Authprovider");
+    return ctx;
 }
