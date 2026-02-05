@@ -74,6 +74,12 @@ export default function LoginPage() {
 
                     {error && <div classname="errorbanner">{error}</div>}
 
+                    <div className="buttonRow">
+                        <button className="btnPrimary" type="submit" disabled={isLoading}>
+                            {isLoading ? "Logging in..." : "Login"}
+                        </button>
+                    </div>
+
                 </form>
 
             </div>
