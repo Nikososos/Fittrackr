@@ -59,7 +59,9 @@ export default function LoginPage() {
                         autoComplete="email"
                     />
 
-                    
+                    <label className="fieldLabel" htmlFor="password">
+                        Password
+                    </label>
 
                 </form>
 
