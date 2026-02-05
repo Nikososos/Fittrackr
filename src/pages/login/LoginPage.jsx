@@ -4,5 +4,14 @@ import { useAuth } from "../../context/AuthContext";
 import "./LoginPage.css";
 
 export default function LoginPage() {
-    return <h1>Login</h1>;
+    const navigate = useNavigate();
+    const { login } = useAuth();
+
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+
+    const [error, setError] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
+
+    
 }
