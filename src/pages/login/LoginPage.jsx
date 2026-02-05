@@ -45,6 +45,24 @@ export default function LoginPage() {
             <div className="loginCard" role="dialog" aria-label="Login">
                 <h1 className="loginTitle">FitTrackr</h1>
 
+                <form className="loginForm" onSubmit={handleSubmit}>
+                    <label className="fieldLabel" htmlFor="email">
+                        Email Address
+                    </label>
+                    <input
+                        id="email"
+                        className="textInput"
+                        type="email"
+                        placeholder="name@email.com"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        autoComplete="email"
+                    />
+
+                    
+
+                </form>
+
             </div>
 
         </div>
