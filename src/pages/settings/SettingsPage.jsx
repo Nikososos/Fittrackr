@@ -1,3 +1,9 @@
+import AppLayout from "../../components/layout/AppLayout"
+
 export default function SettingsPage() {
-    return <h1>Settings</h1>;
+    return (
+        <AppLayout title="Home">
+            <div>Settings</div>
+        </AppLayout>
+    );
 }

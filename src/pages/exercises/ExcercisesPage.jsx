@@ -1,3 +1,9 @@
+import AppLayout from "../../components/layout/AppLayout"
+
 export default function ExcercisesPage() {
-    return <h1>Excercises</h1>;
+    return (
+        <AppLayout title="Home">
+            <div>Excercises</div>
+        </AppLayout>
+    );
 }
