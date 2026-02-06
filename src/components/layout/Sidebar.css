@@ -1,0 +1,45 @@
+.sidebar {
+    width: 240px;
+    background: #ffffff;
+    border-right: 1px solid #e5e7eb;
+    padding: 18px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.brand {
+    display:flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 10px;
+}
+
+.brandMark {
+    width: 14px;
+    height: 14px;
+    border-radius: 4px;
+    background: #2563eb;
+}
+
+.brandText {
+    font-weight: 900;
+    color: #2563eb;
+    font-size: 18px;
+}
+
+.nav {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 6px;
+}
+
+.navLink {
+    text-decoration: none;
+    color: #111;
+    font-weight: 600;
+    padding: 10px 12px;
+    border-radius: 10px;
+    transition: background 120ms ease, color 120ms ease;
+}
