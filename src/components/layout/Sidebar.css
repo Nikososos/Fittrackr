@@ -43,3 +43,12 @@
     border-radius: 10px;
     transition: background 120ms ease, color 120ms ease;
 }
+
+.navLink:hover {
+    background: #eef2ff;
+}
+
+.navLinkActive {
+    background: #2563eb;
+    color: #ffffff;
+}
