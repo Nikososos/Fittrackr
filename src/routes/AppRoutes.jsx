@@ -11,12 +11,14 @@ export default function AppRoutes() {
     return (
         <Routes>
             <Route path="/login" element={<LoginPage />} />
+
             <Route path="/" element={<DashboardPage />} />
             <Route path="/exercises" element={<ExcercisesPage />} />
             <Route path="/workouts" element={<WorkoutsPage />} />
-            <Route path="/workouts/:id" element={<WorkoutsBuilderPage />} />
             <Route path="/progress" element={<ProgressPage />} />
             <Route path="/settings" element={<SettingsPage />} />
+
+            <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
     );
 }
