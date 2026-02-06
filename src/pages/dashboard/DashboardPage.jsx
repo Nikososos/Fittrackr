@@ -1,4 +1,5 @@
 import AppLayout from "../../components/layout/AppLayout"
+import "./DashboardPage.css"
 
 export default function DashboardPage() {
     return (
@@ -10,13 +11,13 @@ export default function DashboardPage() {
 
                 <div className="statsRow">
                     <div className="statCard">
-                        <span className="statLabel">Date last Workout</span>
+                        <span className="statLabel">Date last Workout:</span>
                         <span className="statValue">18 December 2025</span>
                     </div>
 
                     <div className="statCard">
                         <span className="statLabel">
-                            Total workouts this year
+                            Total workouts this year:
                         </span>
                         <span className="statValue">167</span>
                     </div>
