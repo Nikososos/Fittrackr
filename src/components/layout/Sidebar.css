@@ -1,12 +1,18 @@
 .sidebar {
     width: 240px;
-    background: #ffffff;
-    border-right: 1px solid #e5e7eb;
+    background: #8e8e8e;
+    border-right: 1px solid #8e8e8e;
     padding: 18px 14px;
     display: flex;
     flex-direction: column;
     gap: 18px;
 }
+
+.sidebar a {
+  padding: 10px 14px;
+  border-radius: 8px;
+}
+
 
 .brand {
     display:flex;

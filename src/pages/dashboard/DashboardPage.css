@@ -16,16 +16,18 @@
 }
 
 .statsRow {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 24px;
+    display: flex;
+    justify-content: space-around;
+    gap: 16px;
+    margin-top: 200px;
 }
 
 .statCard {
-    background: #e5e5e5;
+    background: #8e8e8e;
     padding: 28px;
     border-radius: 14px;
     text-align: center;
+    width: 300px;
 }
 
 .statLabel {
