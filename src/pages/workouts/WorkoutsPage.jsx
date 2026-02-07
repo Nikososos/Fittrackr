@@ -12,12 +12,27 @@ export default function WorkoutsPage() {
         { id: "w2", name: "Lowerbody" },
     ]);
 
-    const [menuOpenForId, setMenuOpenforId] = useState(null);
+    const [menuOpenForId, setMenuOpenForId] = useState(null);
 
-    
+    const hasWorkouts = workouts.length > 0;
+
+    function handleStartNew() {
+        const newWorkout = {
+            id: crypto.randomUUID(),
+            name: "New workout",
+        };
+        setWorkouts((prev) => [newWorkout, ...prev]);
+    }
     return (
         <AppLayout title="Workouts">
-            <div>Workouts</div>
+            <div className="workoutsPage">
+                <div className="workoutsHeader">
+                    <h1 className="pageTitle">Workouts</h1>
+                    <button className="primaryBtn" onClick={handleStartNew}>
+                        Start new workout
+                    </button>
+                </div>
+            </div>
         </AppLayout>
     );
 }
