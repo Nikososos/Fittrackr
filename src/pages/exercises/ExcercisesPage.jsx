@@ -45,11 +45,22 @@ export default function ExcercisesPage() {
     const [search, setSearch] = useState("");
     const [muscleGroup, setMuscleGroup] = useState("All");
 
-    
+    const filteredExercises = useMemo(() => {
+        return EXERCISES.filter((ex) => {
+            const matchesSearch =
+                ex.name.toLowerCase().includes(search.toLowerCase().trim());
+            
+            const matchesMuscle =
+                muscleGroup === "All" || ex.muscleGroups.includes(muscleGroup);
+            
+            return matchesSearch && matchesMuscle;
+        });
+    }, [search, muscleGroup]);
+
     const selectedExercise =
         EXERCISES.find((e) => e.id === selectedId) || filteredExercises[0] || null;
     return (
-        <AppLayout title="Excercises">
+        <AppLayout title="Home">
             <div className="exercisesPage">
                 <div className="exDetail">
                     <h1 className="PageTitle">Exercises</h1>
