@@ -38,8 +38,14 @@ const EXERCISES = [
     },
 ];
 
-export default function ExcercisesPage() {
+const MUSLE_GROUPS = ["All", "Chest", "Back", "Shoulders", "Biceps", "Triceps"];
 
+export default function ExcercisesPage() {
+    const [selectedId, setSelectedID] = useState(EXCERCISES[0].id);
+    const [search, setSearch] = useState("");
+    const [muscleGroup, setMuscleGroup] = useState("All");
+
+    
     const selectedExercise =
         EXERCISES.find((e) => e.id === selectedId) || filteredExercises[0] || null;
     return (
