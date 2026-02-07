@@ -41,7 +41,7 @@ const EXERCISES = [
 const MUSCLE_GROUPS = ["All", "Chest", "Back", "Shoulders", "Biceps", "Triceps"];
 
 export default function ExcercisesPage() {
-    const [selectedId, setSelectedID] = useState(EXCERCISES[0].id);
+    const [selectedId, setSelectedID] = useState(EXERCISES[0].id);
     const [search, setSearch] = useState("");
     const [muscleGroup, setMuscleGroup] = useState("All");
 
@@ -61,7 +61,7 @@ export default function ExcercisesPage() {
         EXERCISES.find((e) => e.id === selectedId) || filteredExercises[0] || null;
 
     return (
-        <AppLayout title="Home">
+        <AppLayout title="Exercises">
             <div className="exercisesPage">
                 <div className="exDetail">
                     <h1 className="PageTitle">Exercises</h1>
@@ -85,7 +85,7 @@ export default function ExcercisesPage() {
                             <div className="instruction">
                                 <h3>How to do:</h3>
                                 <ol>
-                                    {selectedExercise.instrucitons.map((step) => (
+                                    {selectedExercise.instructions.map((step) => (
                                         <li key={step}>{step}</li>
                                     ))}
                                 </ol>

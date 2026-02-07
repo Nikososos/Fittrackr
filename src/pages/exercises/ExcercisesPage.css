@@ -1,0 +1,122 @@
+.exercisesPage {
+    display: grid;
+    grid-template-columns: 1fr 360px;
+    gap: 24px;
+    align-items: start;
+}
+
+/* Left side */
+.exDetail {
+    background: transparent;
+}
+
+.exerciseTitle {
+    margin-top: 14px;
+    font-size: 28px;
+    font-weight: 800;
+    color: #2563eb;
+}
+
+.meta {
+    margin-top: 10px;
+    color: #111;
+    line-height: 1.6;
+}
+
+.imagePlaceholder {
+    margin: 20px 0;
+    height: 220px;
+    border-radius: 14px;
+    background: #e6e6e6;
+    display: grid;
+    place-items: center;
+    color: #555;
+    font-weight: 600;
+}
+
+.instructions h3 {
+    margin-bottom: 8px;
+}
+
+.instructions ol {
+    padding-left: 20px;
+    line-height: 1.8;
+}
+
+.primaryBtn {
+    margin-top: 18px;
+    background: #2563eb;
+    color: white;
+    font-weight: 700;
+    border: none;
+    border-radius: 12px;
+    padding: 12px 18px;
+    cursor: pointer;
+}
+
+/* Right panel */
+.exBrowser {
+    background: #efefef;
+    border-radius: 14px;
+    padding: 16px;
+    border: 1px solid #e0e0e0;
+    height: calc(100vh - 130px);
+    overflow: hidden;
+}
+
+.browserTitle {
+    margin: 0 0 12px 0;
+    font-size: 20px;
+    font-weight: 800;
+    color: #2563eb;
+}
+
+.filters {
+    display: grid;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.select,
+.search {
+    height: 40px;
+    border-radius: 10px;
+    border: 1px solid #d1d5db;
+    padding: 0 12px;
+    outline: none;
+    background: white;
+}
+
+.list {
+    display: grid;
+    gap: 8px;
+    padding-right: 6px;
+}
+
+.listItem {
+    text-align:L left;
+    border: none;
+    background: #f7f7f7;
+    border-radius: 12px;
+    padding: 14px 12px;
+    cursor: pointer;
+    font-weight: 700;
+    color: #2563eb;
+}
+
+.listItem:hover {
+    background: #e8eeff;
+}
+
+.listItemActive {
+    outline: 2px solid #2563eb;
+    background: #ffffff;
+}
+
+.emptyDetail,
+.emptyList {
+    color: #555;
+    background: #e6e6e6;
+    border-radius: 12px;
+    padding: 18px;
+}
