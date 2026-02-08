@@ -15,6 +15,7 @@ export default function AppRoutes() {
             <Route path="/" element={<DashboardPage />} />
             <Route path="/exercises" element={<ExcercisesPage />} />
             <Route path="/workouts" element={<WorkoutsPage />} />
+            <Route path="/workouts/:id" element={<WorkoutsBuilderPage />} />
             <Route path="/progress" element={<ProgressPage />} />
             <Route path="/settings" element={<SettingsPage />} />
 

@@ -72,7 +72,7 @@ export default function WorkoutsPage() {
                                         }
                                         aria-label="Open menu"
                                     >
-                                        open menu
+                                        open Menu
                                     </button>
 
                                     {menuOpenForId === w.id && (
