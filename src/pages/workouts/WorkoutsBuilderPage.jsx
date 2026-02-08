@@ -77,5 +77,149 @@ export default function WorkoutsBuilderPage() {
         );
     }
 
-    function 
+    function updateSetField(workoutExerciseID, setId, field, value) {
+        setWorkoutExercises((prev) => 
+            prev.map((we) => {
+                if (we.id !== workoutExerciseID) return we;
+                return {
+                    ...we,
+                    sets: we.sets.map((s) => (s.id === setId ? { ...s, [field]: value } : s)),
+                };
+            })
+        );
+    }
+    
+    function handleSave() {
+        //PUT/PATCH to backend comes here
+
+        const payload = {
+            workoutId,
+            workoutName,
+            exercises: workoutExercises,
+        };
+        console.log("SAVE WORKOUT payload:", payload);
+        alert("Saved (demo). Check console for payload.");
+    }
+
+    return (
+        <AppLayout>
+            <div className="wbPage">
+                <div className="wbHeader">
+                    <div>
+                        <div className="wbSmall">Workout</div>
+                        <input
+                            className="wbTitleInput"
+                            value={workoutName}
+                            onChange={(e) => setWorkoutName(e.target.value)}
+                            placeholder="Workout Name"
+                        />
+                    </div>
+
+                    <button className="primaryBtn" onClick={handleSave}>
+                        Save Workout
+                    </button>
+                </div>
+
+                <div className="wbGrid">
+                    {/* LEFT: workout editor */}
+                    <section className="wbEditor">
+                        {workoutExercises.length === 0 ? (
+                            <div className="emptyState">
+                                <h2>No exercises yet</h2>
+                                <p>Add exercises from the right panel to build your workout.</p>
+                            </div>
+                        ) : (
+                            <div className="exerciseCards">
+                                {workoutExercises.map((we) => (
+                                    <div key={we.id} className="exerciseCard">
+                                        <div className="exerciseCardHeader">
+                                            <h3 className="exerciseName">{we.name}</h3>
+                                            <button
+                                                className="dangerBtn"
+                                                onClick={() => removeExercises(we.id)}
+                                            >
+                                                Remove
+                                            </button>
+                                        </div>
+
+                                        <div className="setsTable">
+                                            <div className="setsHead">
+                                                <div>Set</div>
+                                                <div>Weight</div>
+                                                <div>Reps</div>
+                                                <div></div>
+                                            </div>
+
+                                            {we.sets.map((s, idx) => (
+                                                <div key={s.id} className="setsRow">
+                                                    <div className="setNumber">{idx + 1}</div>
+
+                                                    <input
+                                                        className="setInput"
+                                                        value={s.weight}
+                                                        onChange={(e) =>
+                                                            updateSetField(we.id, s.id, "weight", e.target.value)
+                                                        }
+                                                        placeholder="kg"
+                                                        inputMode="decimal"
+                                                    />
+
+                                                    <input
+                                                        className="setInput"
+                                                        value={s.reps}
+                                                        onChange={(e) => 
+                                                            updateSetField(we.id, s.id, "reps", e.target.value)
+                                                        }
+                                                        placeholder="reps"
+                                                        inputMode="numeric"
+                                                    />
+
+                                                    <button
+                                                        className="iconBtn"
+                                                        onClick={() => removeSet(we.id, s.id)}
+                                                        aria-label="Remove set"
+                                                    >
+                                                        X
+                                                    </button>
+                                                </div>
+                                            ))}
+                                        </div>
+
+                                        <button className="secondaryBtn" onClick={() => addSet(we.id)}>
+                                            + Add set
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </section>
+
+                    {/* Right side: Browse Exercises */}
+                    <aside className="wbBrowse">
+                        <h2 className="Browsetitle">Browse Exercises</h2>
+
+                        <input
+                            className="search"
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                            placeholder="search exercise"
+                        />
+
+                        <div className="browseList">
+                            {filteredLibrary.map((ex) => (
+                                <button
+                                    key={ex.id}
+                                    className="browseItem"
+                                    onClick={() => addExcerciseToWorkout(ex)}
+                                >
+                                    <span className="browseItemText">{ex.name}</span>
+                                    <span className="browsePlus">+</span>
+                                </button>
+                            ))}
+                        </div>
+                    </aside>
+                </div>
+            </div>
+        </AppLayout>
+    );
 }
