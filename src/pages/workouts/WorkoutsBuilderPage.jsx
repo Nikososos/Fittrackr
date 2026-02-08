@@ -196,7 +196,7 @@ export default function WorkoutsBuilderPage() {
 
                     {/* Right side: Browse Exercises */}
                     <aside className="wbBrowse">
-                        <h2 className="Browsetitle">Browse Exercises</h2>
+                        <h2 className="browseTitle">Browse Exercises</h2>
 
                         <input
                             className="search"
