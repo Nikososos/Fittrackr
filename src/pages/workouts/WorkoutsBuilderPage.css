@@ -1,0 +1,36 @@
+.wbPage {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.wbHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.wbSmall {
+    font-size: 12px;
+    font-weight: 700;
+    color: #555;
+    margin-bottom: 6px;
+}
+
+.wbTitleInput {
+    font-size: 26px;
+    font-weight: 900;
+    color: #2563eb;
+    border: none;
+    outline: none;
+    background: transparent;
+    padding: 0;
+}
+
+.wbGrid {
+    display: grid;
+    grid-template-columns: 1fr 360px;
+    gap: 24px;
+    align-items: start;
+}
