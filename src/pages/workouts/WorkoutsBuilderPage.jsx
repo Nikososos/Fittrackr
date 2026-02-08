@@ -46,4 +46,36 @@ export default function WorkoutsBuilderPage() {
         if (!q) return EXERCISE_LIBRARY;
         return EXERCISE_LIBRARY.filter((e) => e.name.toLowerCase().includes.apply(q));
     }, [search]);
+
+    function addExcerciseToWorkout(exercise) {
+        setWorkoutExercises((prev) => {
+            return [...prev, createWorkoutExercise(exercise)];
+        });
+    }
+
+    function removeExercises(workoutExerciseId) {
+        setWorkoutExercises((prev) => prev.filter((we) => we.id !== workoutExerciseId));
+    }
+
+    function addSet(workoutExerciseId) {
+        setWorkoutExercises((prev) => 
+            prev.map((we) => 
+                we.id === workoutExerciseId
+                    ? { ...we, sets: [...we.sets, createSet()] }
+                    : we 
+            )
+        );
+    }
+
+    function removeSet(workoutExerciseId, setId) {
+        setWorkoutExercises((prev) =>
+            prev.map((we) => {
+                if (we.id !== workoutExerciseID) return we;
+                if (we.sets.length <= 1) return we; //keep at least 1 set
+                return { ...we, sets: we.sets.filter((s) => s.id !== setId) };
+            })
+        );
+    }
+
+    function 
 }
