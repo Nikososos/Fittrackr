@@ -86,3 +86,48 @@
     font-weight: 900;
     color: #2563eb;
 }
+
+.dangerBtn {
+    border: none;
+    background: transparent;
+    color: #2563eb;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.setsTable {
+    background: #f7f7f7;
+    border-radius: 12px;
+    padding: 10px;
+}
+
+.setsHead {
+    display: grid;
+    grid-template-columns: 50px 1fr 1fr 44px;
+    gap: 10px;
+    font-weight: 800;
+    color: #333;
+    padding: 6px 6px 10px 6px;
+}
+
+.setsRow {
+    display: grid;
+    grid-template-columns: 50px 1fr 1fr 44px;
+    gap: 10px;
+    align-items: center;
+    padding: 6px;
+}
+
+.setNumber {
+    font-weight: 800;
+    color: #333;
+}
+
+.setInput {
+    height: 38px;
+    border-radius: 10px;
+    border: 1px solid #d1d5db;
+    padding: 0 10px;
+    outline: none;
+    background: white;
+}
