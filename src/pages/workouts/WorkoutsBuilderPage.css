@@ -54,3 +54,35 @@
     padding: 10px 14px;
     cursor: pointer;
 }
+
+.wbEditor {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.exerciseCards {
+    display: grid;
+    gap: 16px;
+}
+
+.exerciseCard{
+    background: #e6e6e6;
+    border-radius: 14px;
+    padding: 16px;
+}
+
+.exerciseCardHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.exerciseName {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 900;
+    color: #2563eb;
+}
