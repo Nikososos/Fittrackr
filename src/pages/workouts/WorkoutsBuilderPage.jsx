@@ -1,8 +1,10 @@
 import { useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import AppLayout from "../../components/layout/AppLayout";
+import ExerciseBrowserPanel from "../../components/exercises/ExerciseBrowserPanel";
+import ExerciseBrowserItem from "../../components/exercises/ExerciseBrowserItem";
 import "./WorkoutsBuilderPage.css";
-import ExcercisesPage from "../exercises/ExcercisesPage";
+import ExercisesPage from "../exercises/ExercisesPage";
 
 // Dummy data used, connect to db later//
 
@@ -195,29 +197,20 @@ export default function WorkoutsBuilderPage() {
                     </section>
 
                     {/* Right side: Browse Exercises */}
-                    <aside className="wbBrowse">
-                        <h2 className="browseTitle">Browse Exercises</h2>
-
-                        <input
-                            className="search"
-                            value={search}
-                            onChange={(e) => setSearch(e.target.value)}
-                            placeholder="search exercise"
-                        />
-
-                        <div className="browseList">
-                            {filteredLibrary.map((ex) => (
-                                <button
-                                    key={ex.id}
-                                    className="browseItem"
-                                    onClick={() => addExcerciseToWorkout(ex)}
-                                >
-                                    <span className="browseItemText">{ex.name}</span>
-                                    <span className="browsePlus">+</span>
-                                </button>
-                            ))}
-                        </div>
-                    </aside>
+                    <ExerciseBrowserPanel
+                        searchValue={search}
+                        onSearchChange={setSearch}
+                        title="Browse Exercises"
+                    >
+                        {filteredLibrary.map((ex) => (
+                            <ExerciseBrowserItem
+                                key={ex.id}
+                                text={ex.name}
+                                right="+"
+                                onClick={() => addExcerciseToWorkout(ex)}
+                            />
+                        ))}
+                    </ExerciseBrowserPanel>
                 </div>
             </div>
         </AppLayout>

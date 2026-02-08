@@ -1,6 +1,8 @@
 import { useMemo, useState } from "react";
-import AppLayout from "../../components/layout/AppLayout"
-import "./ExcercisesPage.css"
+import AppLayout from "../../components/layout/AppLayout";
+import ExerciseBrowserPanel from "../../components/exercises/ExerciseBrowserPanel";
+import ExerciseBrowserItem from "../../components/exercises/ExerciseBrowserItem";
+import "./ExercisesPage.css";
 
 const EXERCISES = [
     {
@@ -96,48 +98,20 @@ export default function ExcercisesPage() {
                     )}
                 </div>
 
-                <aside className="exBrowser">
-                    <h2 className="browserTitle">Browse Exercises</h2>
-
-                    <div className="filters">
-                        <select
-                            className="select"
-                            value={muscleGroup}
-                            onChange={(e) => setMuscleGroup(e.target.value)}
-                        >
-                            {MUSCLE_GROUPS.map((m) => (
-                                <option key={m} value={m}>
-                                    {m}
-                                </option>
-                            ))}
-                        </select>
-
-                        <input
-                            className="search"
-                            value={search}
-                            onChange={(e) => setSearch(e.target.value)}
-                            placeholder="Search excercise"
+                <ExerciseBrowserPanel
+                    title="Browse Exercises"
+                    searchValue={search}
+                    onSearchChange={setSearch}
+                >
+                    {filteredExercises.map((ex) => (
+                        <ExerciseBrowserItem
+                            key={ex.id}
+                            text={ex.name}
+                            right=">"
+                            onClick={() => setSelectedID(ex.id)}
                         />
-                    </div>
-
-                    <div className="list">
-                        {filteredExercises.length === 0 ? (
-                            <div className="emptyList">No excercises found.</div>
-                        ) : (
-                            filteredExercises.map((ex) => (
-                                <button
-                                    key={ex.id}
-                                    className={
-                                        ex.id === selectedId ? "listItem listItemActive" : "listItem"
-                                    }
-                                    onClick={() => setSelectedID(ex.id)}
-                                >
-                                    {ex.name}
-                                </button>
-                            ))
-                        )}
-                    </div>
-                </aside>
+                    ))}
+                </ExerciseBrowserPanel>
             </div>
         </AppLayout>
     );

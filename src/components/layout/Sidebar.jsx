@@ -3,7 +3,7 @@ import "./Sidebar.css";
 
 const navItems = [
     { to: "/", label: "Home" },
-    { to: "/exercises", label: "Excercises" },
+    { to: "/exercises", label: "Exercises" },
     { to: "/workouts", label: "Workouts" },
     { to: "/progress", label: "Progress" },
     { to: "/settings", label: "Settings" },

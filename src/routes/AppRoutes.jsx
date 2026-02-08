@@ -1,7 +1,7 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import LoginPage from "../pages/login/LoginPage";
 import DashboardPage from "../pages/dashboard/DashboardPage";
-import ExcercisesPage from "../pages/exercises/ExcercisesPage";
+import ExercisesPage from "../pages/exercises/ExercisesPage";
 import WorkoutsPage from "../pages/workouts/WorkoutsPage";
 import WorkoutsBuilderPage from "../pages/workouts/WorkoutsBuilderPage";
 import ProgressPage from "../pages/progress/ProgressPage";
@@ -13,7 +13,7 @@ export default function AppRoutes() {
             <Route path="/login" element={<LoginPage />} />
 
             <Route path="/" element={<DashboardPage />} />
-            <Route path="/exercises" element={<ExcercisesPage />} />
+            <Route path="/exercises" element={<ExercisesPage />} />
             <Route path="/workouts" element={<WorkoutsPage />} />
             <Route path="/workouts/:id" element={<WorkoutsBuilderPage />} />
             <Route path="/progress" element={<ProgressPage />} />
