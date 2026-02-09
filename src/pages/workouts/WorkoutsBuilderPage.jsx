@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import AppLayout from "../../components/layout/AppLayout";
 import ExerciseBrowserPanel from "../../components/exercises/ExerciseBrowserPanel";
+import ExerciseFilters from "../../components/exercises/ExerciseFilters";
 import ExerciseBrowserItem from "../../components/exercises/ExerciseBrowserItem";
 import "./WorkoutsBuilderPage.css";
 import ExercisesPage from "../exercises/ExercisesPage";
@@ -197,19 +198,26 @@ export default function WorkoutsBuilderPage() {
                     </section>
 
                     {/* Right side: Browse Exercises */}
-                    <ExerciseBrowserPanel
-                        searchValue={search}
-                        onSearchChange={setSearch}
-                        title="Browse Exercises"
-                    >
-                        {filteredLibrary.map((ex) => (
-                            <ExerciseBrowserItem
-                                key={ex.id}
-                                text={ex.name}
-                                right="+"
-                                onClick={() => addExcerciseToWorkout(ex)}
-                            />
-                        ))}
+                    <ExerciseBrowserPanel title="Browse Exercises">
+                        <ExerciseFilters
+                            muscleGroupValue={"All"}
+                            onMuscleGroupChange={() => {}}
+                            muscleGroupOptions={["All"]}
+                            searchValue={search}
+                            onSearchChange={setSearch}
+                            showMuscleGroup={false}
+                        />
+
+                        <div className="exPanelList">
+                            {filteredLibrary.map((ex) => (
+                                <ExerciseBrowserItem
+                                    key={ex.id}
+                                    text={ex.name}
+                                    right="+"
+                                    onClick={() => addExcerciseToWorkout(ex)}
+                                />
+                            ))}
+                        </div>
                     </ExerciseBrowserPanel>
                 </div>
             </div>
