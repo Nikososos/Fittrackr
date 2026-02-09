@@ -145,3 +145,11 @@
     cursor: pointer;
     font-weight: 900;
 }
+
+.exPanelList {
+  overflow: auto;
+  height: calc(100% - 120px);
+  display: grid;
+  gap: 10px;
+  padding-right: 6px;
+}

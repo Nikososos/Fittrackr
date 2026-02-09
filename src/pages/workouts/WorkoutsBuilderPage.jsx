@@ -17,6 +17,8 @@ const EXERCISE_LIBRARY = [
     { id: "ex5", name: "Shoulder Press", muscleGroup: "Shoulders" },
 ];
 
+const MUSCLE_GROUPS = ["All", "Chest", "Back", "Shoulders", "Biceps", "Triceps"];
+
 function createSet() {
     return { id: crypto.randomUUID(), weigth: "", reps: "" };
 }
@@ -207,12 +209,12 @@ export default function WorkoutsBuilderPage() {
                     {/* Right side: Browse Exercises */}
                     <ExerciseBrowserPanel title="Browse Exercises">
                         <ExerciseFilters
-                            muscleGroupValue={"All"}
-                            onMuscleGroupChange={() => {}}
-                            muscleGroupOptions={["All"]}
+                            muscleGroupValue={muscleGroup}
+                            onMuscleGroupChange={setMuscleGroup}
+                            muscleGroupOptions={MUSCLE_GROUPS}
                             searchValue={search}
                             onSearchChange={setSearch}
-                            showMuscleGroup={false}
+                            showMuscleGroup={true}
                         />
 
                         <div className="exPanelList">
