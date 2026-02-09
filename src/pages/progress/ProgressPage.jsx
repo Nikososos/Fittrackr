@@ -18,12 +18,41 @@ const PROGRESS_BY_DATE = {
     }
 };
 
-// Turns number in 2 digit string for ISO date
+// Turns number in 2 digit string for ISO date formatting
 function pad2(n) {
     return String(n).padStart(2, "0");
 }
 
+function toISODate(year, monthIndex, day) {
+    return `${year}-${pad2(monthIndex + 1)}-${pad2(day)}`;
+}
+
+function startOfMonth(date) {
+    return new Date(date.getFullyear(), date.getMonth(), 1);
+}
+
+function daysInmonth(date) {
+    return new Date(date.getFullyear(), date.getMonth() + 1, 0).getDate();
+}
+
 export default function ProgressPage() {
+    const today = new Date();
+
+    const [monthDate, setMonthDate] = useState(startOfMonth(today));
+    const [selectedISO, setSelectedISO] = useState(() => {
+        return toISODate(today.getFullYear(), today.getMonth(), today.getDate());
+    });
+
+    const year = monthDate.getFullYear();
+    const monthIndex = monthDate.getMonth();
+    const monthLabel = monthDate.toLocaleString("en", { month: "long" });
+
+    const totalDays = daysInmonth(monthDat);
+
+    const firstDay = new Date(year, monthIndex, 1).getDay();
+
+    
+
     return (
         <AppLayout title="Home">
             <div>Progress</div>
