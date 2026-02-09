@@ -10,11 +10,11 @@ import ExercisesPage from "../exercises/ExercisesPage";
 // Dummy data used, connect to db later//
 
 const EXERCISE_LIBRARY = [
-    { id: "ex1", name: "Bench Press (Barbell)" },
-    { id: "ex2", name: "Dumbell Curl" },
-    { id: "ex3", name: "Seated Cable Row" },
-    { id: "ex4", name: "Lat Pulldown" },
-    { id: "ex5", name: "Shoulder Press" },
+    { id: "ex1", name: "Bench Press (Barbell)", muscleGroup: "Chest" },
+    { id: "ex2", name: "Dumbell Curl", muscleGroup: "Biceps" },
+    { id: "ex3", name: "Seated Cable Row", muscleGroup: "Back" },
+    { id: "ex4", name: "Lat Pulldown", muscleGroup:"Back" },
+    { id: "ex5", name: "Shoulder Press", muscleGroup: "Shoulders" },
 ];
 
 function createSet() {
@@ -42,13 +42,20 @@ export default function WorkoutsBuilderPage() {
 
 
     // Browse panel state
+    const [muscleGroup, setMuscleGroup] = useState("All");
     const [search, setSearch] = useState("");
 
     const filteredLibrary = useMemo (() => {
         const q = search.toLowerCase().trim();
-        if (!q) return EXERCISE_LIBRARY;
-        return EXERCISE_LIBRARY.filter((e) => e.name.toLowerCase().includes.apply(q));
-    }, [search]);
+        
+        return EXERCISE_LIBRARY.filter((e) => {
+            const matchesSearch = e.name.toLowerCase().includes(q);
+            const matchesMuscle =
+                muscleGroup === "All" || e.muscleGroup === muscleGroup;
+            
+            return matchesSearch && matchesMuscle;
+        });
+    }, [search, muscleGroup]);
 
     function addExcerciseToWorkout(exercise) {
         setWorkoutExercises((prev) => {
