@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import AppLayout from "../../components/layout/AppLayout";
 import ExerciseBrowserPanel from "../../components/exercises/ExerciseBrowserPanel";
+import ExerciseFilters from "../../components/exercises/ExerciseFilters";
 import ExerciseBrowserItem from "../../components/exercises/ExerciseBrowserItem";
 import "./ExercisesPage.css";
 
@@ -98,19 +99,26 @@ export default function ExcercisesPage() {
                     )}
                 </div>
 
-                <ExerciseBrowserPanel
-                    title="Browse Exercises"
-                    searchValue={search}
-                    onSearchChange={setSearch}
-                >
-                    {filteredExercises.map((ex) => (
-                        <ExerciseBrowserItem
-                            key={ex.id}
-                            text={ex.name}
-                            right=">"
-                            onClick={() => setSelectedID(ex.id)}
-                        />
-                    ))}
+                <ExerciseBrowserPanel title="Browse Exercises">
+                    <ExerciseFilters
+                        muscleGroupValue={muscleGroup}
+                        onMuscleGroupChange={setMuscleGroup}
+                        muscleGroupOptions={MUSCLE_GROUPS}
+                        searchValue={search}
+                        onSearchChange={setSearch}
+                        showMuscleGroup={true}
+                    />
+
+                    <div className="exPanelList">
+                        {filteredExercises.map((ex) => (
+                            <ExerciseBrowserItem
+                                key={ex.id}
+                                text={ex.name}
+                                right=">"
+                                onClick={() => setSelectedID(ex.id)}
+                            />
+                        ))}
+                    </div>
                 </ExerciseBrowserPanel>
             </div>
         </AppLayout>

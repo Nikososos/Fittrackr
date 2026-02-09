@@ -55,68 +55,10 @@
 }
 
 /* Right panel */
-.exBrowser {
-    background: #efefef;
-    border-radius: 14px;
-    padding: 16px;
-    border: 1px solid #e0e0e0;
-    height: calc(100vh - 130px);
-    overflow: hidden;
-}
-
-.browserTitle {
-    margin: 0 0 12px 0;
-    font-size: 20px;
-    font-weight: 800;
-    color: #2563eb;
-}
-
-.filters {
+.exPanelList {
+    overflow: auto;
+    height: calc(100% - 120px);
     display: grid;
     gap: 10px;
-    margin-bottom: 12px;
-}
-
-.select,
-.search {
-    height: 40px;
-    border-radius: 10px;
-    border: 1px solid #d1d5db;
-    padding: 0 12px;
-    outline: none;
-    background: white;
-}
-
-.list {
-    display: grid;
-    gap: 8px;
     padding-right: 6px;
-}
-
-.listItem {
-    text-align: center;
-    border: none;
-    background: #f7f7f7;
-    border-radius: 12px;
-    padding: 14px 12px;
-    cursor: pointer;
-    font-weight: 700;
-    color: #2563eb;
-}
-
-.listItem:hover {
-    background: #e8eeff;
-}
-
-.listItemActive {
-    outline: 2px solid #2563eb;
-    background: #ffffff;
-}
-
-.emptyDetail,
-.emptyList {
-    color: #555;
-    background: #e6e6e6;
-    border-radius: 12px;
-    padding: 18px;
 }
