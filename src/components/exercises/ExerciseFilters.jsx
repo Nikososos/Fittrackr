@@ -25,11 +25,11 @@ export default function ExerciseFilters({
             )}
 
             <input
-                classNam="exSearch"
+                className="exSearch"
                 value={searchValue}
                 onChange={(e) = onSearchChange(e.target.value)}
                 placeholder="Search exercise"
             />
         </div>
-    )
+    );
 }
