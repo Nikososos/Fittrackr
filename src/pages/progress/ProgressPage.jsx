@@ -28,11 +28,11 @@ function toISODate(year, monthIndex, day) {
 }
 
 function startOfMonth(date) {
-    return new Date(date.getFullyear(), date.getMonth(), 1);
+    return new Date(date.getFullYear(), date.getMonth(), 1);
 }
 
 function daysInmonth(date) {
-    return new Date(date.getFullyear(), date.getMonth() + 1, 0).getDate();
+    return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
 }
 
 export default function ProgressPage() {
@@ -47,15 +47,47 @@ export default function ProgressPage() {
     const monthIndex = monthDate.getMonth();
     const monthLabel = monthDate.toLocaleString("en", { month: "long" });
 
-    const totalDays = daysInmonth(monthDat);
+    const totalDays = daysInmonth(monthDate);
 
     const firstDay = new Date(year, monthIndex, 1).getDay();
 
-    
+    function prevMonth() {
+        setMonthDate((d) => new Date(d.getFullYear(), d.getMonth() -1, 1));
+    }
+
+    function nextMonth() {
+        setMonthDate((d) => new Date(d.getFullYear(), d.getMonth() + 1, 1));
+    }
 
     return (
         <AppLayout title="Home">
-            <div>Progress</div>
+            <div className="progressPage">
+                <h1 className="pageTitle">Progress</h1>
+
+                <div className="progressLayout"></div>
+                {/* Calender */}
+                <section className="calenderCard">
+                    <div className="calenderHeader">
+                        <button className="iconBtn" onClick={prevMonth} aria-label="Previous month">
+                            back
+                        </button>
+
+                        <div className="calenderTitle">
+                            {monthLabel} {year}
+                        </div>
+
+                        <button className="iconBtn" onClick={nextMonth} aria-label="Next month">
+                            next
+                        </button>
+                    </div>
+
+                    <div className="weekDays">
+                        <div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div><div>Sun</div>
+                    </div>
+
+                    
+                </section>
+            </div>
         </AppLayout>
     );
 }
