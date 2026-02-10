@@ -22,6 +22,11 @@ const PROGRESS_BY_DATE = {
 function pad2(n) {
     return String(n).padStart(2, "0");
 }
+// formats iso date to regular dutch date format
+function formatDisplayDate(isoDate) {
+    const [year, month, day] = isoDate.split("-");
+    return `${day}-${month}-${year}`;
+}
 
 function toISODate(year, monthIndex, day) {
     return `${year}-${pad2(monthIndex + 1)}-${pad2(day)}`;
@@ -80,11 +85,11 @@ export default function ProgressPage() {
     }, [year, monthIndex, totalDays]);
 
     const selectedData = PROGRESS_BY_DATE[selectedISO] || null;
-
+    // Previous month 
     function prevMonth() {
         setMonthDate((d) => new Date(d.getFullYear(), d.getMonth() -1, 1));
     }
-
+    // Next month 
     function nextMonth() {
         setMonthDate((d) => new Date(d.getFullYear(), d.getMonth() + 1, 1));
     }
@@ -150,7 +155,9 @@ export default function ProgressPage() {
 
                     {/* Day summary */} 
                     <section className="summaryCard">
-                        <div className="summaryDate">{selectedISO}</div>
+                        <div className="summaryDate">
+                            {formatDisplayDate(selectedISO)}
+                        </div>
 
                         {selectedData ? (
                             <>
