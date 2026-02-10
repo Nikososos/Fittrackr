@@ -87,82 +87,83 @@ export default function ProgressPage() {
             <div className="progressPage">
                 <h1 className="pageTitle">Progress</h1>
 
-                <div className="progressLayout"></div>
-                {/* Calender */}
-                <section className="calenderCard">
-                    <div className="calenderHeader">
-                        <button className="iconBtn" onClick={prevMonth} aria-label="Previous month">
-                            back
-                        </button>
+                <div className="progressLayout">
+                    {/* Calender */}
+                    <section className="calenderCard">
+                        <div className="calenderHeader">
+                            <button className="iconBtn" onClick={prevMonth} aria-label="Previous month">
+                                back
+                            </button>
 
-                        <div className="calenderTitle">
-                            {monthLabel} {year}
-                        </div>
-
-                        <button className="iconBtn" onClick={nextMonth} aria-label="Next month">
-                            next
-                        </button>
-                    </div>
-
-                    <div className="weekdays">
-                        <div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div><div>Sun</div>
-                    </div>
-
-                    
-                    <div className="calenderGrid">
-                        {calenderCells.map((cell) => {
-                            if (cell.type === "empty") {
-                                return <div key={cell.key} className="dayCell dayCellEmpty"/>
-                            }
-
-                            const isSelected = cell.iso === selectedISO;
-                            const classes = [
-                                "dayCell",
-                                cell.hasWorkout ? "dayCellHasWorkout" : "",
-                                isSelected ? "dayCellSelected" : "",
-                            ].join(" ");
-
-                            return (
-                                <button
-                                    key={cell.key}
-                                    className={classes}
-                                    onClick={() => setSelectedISO(cell.iso)}
-                                    type="button"
-                                >
-                                    {cell.day}
-                                </button>
-                            );
-                        })}
-                    </div>
-
-                    <div className="legend">
-                        <span className="dot dotWorkout">Workout Logged</span>
-                        <span className="dot dotSelected"> Selected day</span>
-                    </div>
-                </section>
-
-                {/* Day summary */} 
-                <section className="summaryCard">
-                    <div className="summaryDate">{selectedISO}</div>
-
-                    {selectedData ? (
-                        <>
-                            <div className="summaryRow">
-                                <div className="summaryLabel">Workout Completed</div>
-                                <div className="summaryValue">{selectedData.workoutName}</div>
+                            <div className="calenderTitle">
+                                {monthLabel} {year}
                             </div>
 
-                            <div className="summaryRow">
-                                <div className="summaryLabel">Personal best:</div>
-                                <div className="summaryValue">{selectedData.personalBest}</div>
-                            </div>
-                        </>
-                    ) : (
-                        <div className="summaryEmpty">
-                            No workout logged for this day
+                            <button className="iconBtn" onClick={nextMonth} aria-label="Next month">
+                                next
+                            </button>
                         </div>
-                    )}
-                </section>
+
+                        <div className="weekdays">
+                            <div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div><div>Sun</div>
+                        </div>
+
+                        
+                        <div className="calenderGrid">
+                            {calenderCells.map((cell) => {
+                                if (cell.type === "empty") {
+                                    return <div key={cell.key} className="dayCell dayCellEmpty"/>
+                                }
+
+                                const isSelected = cell.iso === selectedISO;
+                                const classes = [
+                                    "dayCell",
+                                    cell.hasWorkout ? "dayCellHasWorkout" : "",
+                                    isSelected ? "dayCellSelected" : "",
+                                ].join(" ");
+
+                                return (
+                                    <button
+                                        key={cell.key}
+                                        className={classes}
+                                        onClick={() => setSelectedISO(cell.iso)}
+                                        type="button"
+                                    >
+                                        {cell.day}
+                                    </button>
+                                );
+                            })}
+                        </div>
+
+                        <div className="legend">
+                            <span className="dot dotWorkout">Workout Logged</span>
+                            <span className="dot dotSelected"> Selected day</span>
+                        </div>
+                    </section>
+
+                    {/* Day summary */} 
+                    <section className="summaryCard">
+                        <div className="summaryDate">{selectedISO}</div>
+
+                        {selectedData ? (
+                            <>
+                                <div className="summaryRow">
+                                    <div className="summaryLabel">Workout Completed</div>
+                                    <div className="summaryValue">{selectedData.workoutName}</div>
+                                </div>
+
+                                <div className="summaryRow">
+                                    <div className="summaryLabel">Personal best:</div>
+                                    <div className="summaryValue">{selectedData.personalBest}</div>
+                                </div>
+                            </>
+                        ) : (
+                            <div className="summaryEmpty">
+                                No workout logged for this day
+                            </div>
+                        )}
+                    </section>
+                </div>
             </div>
         </AppLayout>
     );
