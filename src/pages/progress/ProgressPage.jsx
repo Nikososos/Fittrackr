@@ -49,25 +49,32 @@ export default function ProgressPage() {
 
     const totalDays = daysInmonth(monthDate);
 
+    //Sun = 0, Mon=1, Tue=2, etc....
     const firstDay = new Date(year, monthIndex, 1).getDay();
+    // For a Mon-first calender shift, Sun->6, Mon->0, Tue->1...
+    const mondayFirstOffset = (firstDay + 6) % 7; 
 
     const calenderCells = useMemo(() => {
         const cells = [];
     
+        // Empty cells before 1st of the month
+        for (let i = 0; i < mondayFirstOffset; i++) {
+            cells.push({ type: "empty", key: `e-${i}` });
+        }
 
-    // Days in calender
-    for (let day = 1; day <= totalDays; day++) {
-        const iso = toISODate(year, monthIndex, day);
-        const hasWorkout = Boolean(PROGRESS_BY_DATE[iso]);
+        // Days in calender
+        for (let day = 1; day <= totalDays; day++) {
+            const iso = toISODate(year, monthIndex, day);
+            const hasWorkout = Boolean(PROGRESS_BY_DATE[iso]);
 
-        cells.push({
-            type: "day",
-            key: iso,
-            day,
-            iso,
-            hasWorkout,
-        });
-    }
+            cells.push({
+                type: "day",
+                key: iso,
+                day,
+                iso,
+                hasWorkout,
+            });
+        }
 
         return cells;
     }, [year, monthIndex, totalDays]);
