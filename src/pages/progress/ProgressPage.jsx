@@ -51,6 +51,29 @@ export default function ProgressPage() {
 
     const firstDay = new Date(year, monthIndex, 1).getDay();
 
+    const calenderCells = useMemo(() => {
+        const cells = [];
+    
+
+    // Days in calender
+    for (let day = 1; day <= totalDays; day++) {
+        const iso = toISODate(year, monthIndex, day);
+        const hasWorkout = Boolean(PROGRESS_BY_DATE[iso]);
+
+        cells.push({
+            type: "day",
+            key: iso,
+            day,
+            iso,
+            hasWorkout,
+        });
+    }
+
+        return cells;
+    }, [year, monthIndex, totalDays]);
+
+    const SelectedData = PROGRESS_BY_DATE[selectedISO] || null;
+
     function prevMonth() {
         setMonthDate((d) => new Date(d.getFullYear(), d.getMonth() -1, 1));
     }
@@ -85,6 +108,32 @@ export default function ProgressPage() {
                         <div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div><div>Sun</div>
                     </div>
 
+                    
+                    <div className="calenderGrid">
+                        {calenderCells.map((cell) => {
+                            if (cell.type === "empty") {
+                                return <div key={cell.key} className="dayCell dayCellEmpty"/>
+                            }
+
+                            const isSelected = cell.iso === selectedISO;
+                            const classes = [
+                                "dayCell",
+                                cell.hasWorkout ? "dayCellHasWorkout" : "",
+                                isSelected ? "dayCellSelected" : "",
+                            ].join(" ");
+
+                            return (
+                                <button
+                                    key="{cell.key}"
+                                    className="{classes}"
+                                    onClick={() => setSelectedISO(cell.iso)}
+                                    type="button"
+                                >
+                                    {cell.day}
+                                </button>
+                            );
+                        })}
+                    </div>
                     
                 </section>
             </div>
