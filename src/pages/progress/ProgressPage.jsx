@@ -137,7 +137,7 @@ export default function ProgressPage() {
 
                         <div className="legend">
                             <span className="dot dotWorkout">Workout Logged</span>
-                            <span className="dot dotSelected"> Selected day</span>
+                            <span className="dot dotSelected">Selected day</span>
                         </div>
                     </section>
 

@@ -77,3 +77,67 @@
 .dayCellHasWorkout {
     outline: 2px solid rgba(37, 99, 235, 0,35);
 }
+
+.dayCellSelected {
+    background: #2563eb;
+    color: white;
+    border-color: #2563eb;
+}
+
+.legend {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    margin-top: 12px;
+    color: #333;
+    font-weight: 600;
+    font-size: 13px;
+}
+
+.dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 999px;
+    margin-right: 6px;
+}
+
+.dotWorkout {
+    background: rgba(37, 99, 235, 0,35);
+    border: 1px solid rgba(37, 99, 235, 0,35);
+}
+
+.dotSelected {
+    background: #2563eb;
+}
+
+.summaryDate {
+    font-weight: 900;
+    color: #2563eb;
+    font-size: 18px;
+    margin-bottom: 12px;
+}
+
+.summaryRow {
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.8);
+}
+
+.summaryLabel {
+    font-weight: 800;
+    color: #333;
+}
+
+.summaryValue {
+    font-weight: 700;
+    color: #111;
+}
+
+.summaryEmpty {
+    color: #444;
+    font-weight: 600;
+    padding: 10px;
+}
