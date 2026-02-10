@@ -72,7 +72,7 @@ export default function ProgressPage() {
         return cells;
     }, [year, monthIndex, totalDays]);
 
-    const SelectedData = PROGRESS_BY_DATE[selectedISO] || null;
+    const selectedData = PROGRESS_BY_DATE[selectedISO] || null;
 
     function prevMonth() {
         setMonthDate((d) => new Date(d.getFullYear(), d.getMonth() -1, 1));
@@ -124,8 +124,8 @@ export default function ProgressPage() {
 
                             return (
                                 <button
-                                    key="{cell.key}"
-                                    className="{classes}"
+                                    key={cell.key}
+                                    className={classes}
                                     onClick={() => setSelectedISO(cell.iso)}
                                     type="button"
                                 >
@@ -134,7 +134,34 @@ export default function ProgressPage() {
                             );
                         })}
                     </div>
-                    
+
+                    <div className="legend">
+                        <span className="dot dotWorkout">Workout Logged</span>
+                        <span className="dot dotSelected"> Selected day</span>
+                    </div>
+                </section>
+
+                {/* Day summary */} 
+                <section className="summaryCard">
+                    <div className="summaryDate">{selectedISO}</div>
+
+                    {selectedData ? (
+                        <>
+                            <div className="summaryRow">
+                                <div className="summaryLabel">Workout Completed</div>
+                                <div className="summaryValue">{selectedData.workoutName}</div>
+                            </div>
+
+                            <div className="summaryRow">
+                                <div className="summaryLabel">Personal best:</div>
+                                <div className="summaryValue">{selectedData.personalBest}</div>
+                            </div>
+                        </>
+                    ) : (
+                        <div className="summaryEmpty">
+                            No workout logged for this day
+                        </div>
+                    )}
                 </section>
             </div>
         </AppLayout>
