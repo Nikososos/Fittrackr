@@ -82,7 +82,7 @@ export default function WorkoutsBuilderPage() {
     function removeSet(workoutExerciseId, setId) {
         setWorkoutExercises((prev) =>
             prev.map((we) => {
-                if (we.id !== workoutExerciseID) return we;
+                if (we.id !== workoutExerciseId) return we;
                 if (we.sets.length <= 1) return we; //keep at least 1 set
                 return { ...we, sets: we.sets.filter((s) => s.id !== setId) };
             })
