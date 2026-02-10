@@ -1,0 +1,27 @@
+.progressPage {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.progressLayout {
+    display: grid;
+    grid-template-columns: 560px 1fr;
+    gap: 24px;
+    align-items: start;
+}
+
+.calenderCard,
+.summaryCard {
+    background: #e6e6e6;
+    border-radius: 14px;
+    padding: 16px;
+}
+
+.calenderHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 10px;
+}
