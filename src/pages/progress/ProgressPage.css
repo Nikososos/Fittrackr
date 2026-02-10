@@ -16,6 +16,8 @@
     background: #e6e6e6;
     border-radius: 14px;
     padding: 16px;
+    width: 620px;
+    max-width: 100%;
 }
 
 .calenderHeader {
@@ -61,6 +63,11 @@
 }
 
 .dayCell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
     height: 44px;
     border-radius: 12px;
     border: 1px solid #d1d5db;
@@ -82,6 +89,17 @@
     background: #2563eb;
     color: white;
     border-color: #2563eb;
+}
+
+.dayNumber {
+    font-weight: 800;
+}
+
+.workoutDot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: #2563eb;
 }
 
 .legend {

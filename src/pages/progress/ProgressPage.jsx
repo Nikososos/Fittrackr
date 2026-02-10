@@ -141,7 +141,11 @@ export default function ProgressPage() {
                                         onClick={() => setSelectedISO(cell.iso)}
                                         type="button"
                                     >
-                                        {cell.day}
+                                        <span className="dayNumber">{cell.day}</span>
+
+                                        {cell.hasWorkout && !isSelected && (
+                                            <span className="workoutDot"/>
+                                        )}
                                     </button>
                                 );
                             })}
@@ -162,7 +166,7 @@ export default function ProgressPage() {
                         {selectedData ? (
                             <>
                                 <div className="summaryRow">
-                                    <div className="summaryLabel">Workout Completed</div>
+                                    <div className="summaryLabel">Workout Completed:</div>
                                     <div className="summaryValue">{selectedData.workoutName}</div>
                                 </div>
 
