@@ -61,6 +61,8 @@ export default function WorkoutsBuilderPage() {
 
     function addExcerciseToWorkout(exercise) {
         setWorkoutExercises((prev) => {
+            const alreadyAdded = prev.some((we) => we.exerciseId === exercise.id);
+            if (alreadyAdded) return prev; // avoid duplicates
             return [...prev, createWorkoutExercise(exercise)];
         });
     }
