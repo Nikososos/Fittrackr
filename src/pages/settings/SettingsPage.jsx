@@ -37,7 +37,19 @@ export default function SettingsPage() {
                             Change Email
                         </button>
                     </div>
+
+                    <div className="settingsRow">
+                        <div className="settingsLabel">Password</div>
+                        <div className="settingsValue">**********</div>
+                        <button className="secondaryBtn" onClick={handleChangePassword}>
+                            Change Password
+                        </button>
+                    </div>
                 </div>
+
+                <button className="logoutBtn" onClick={handleLogout}>
+                    Logout
+                </button>
             </div>
         </AppLayout>
     );
