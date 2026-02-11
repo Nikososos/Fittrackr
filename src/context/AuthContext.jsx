@@ -12,8 +12,8 @@ export function Authprovider({ children }) {
     };
 
     const logout = () => {
-        setToken(newToken);
-        localStorage.setItem("token", newtoken);
+        setToken(null);
+        localStorage.removeItem("token");
     };
 
     const value = useMemo(

@@ -12,7 +12,9 @@ export default function SettingsPage() {
     const [email] = useState("user@email.com");
 
     function handleLogout() {
+        console.log("logout clicked");
         logout();
+        console.log("after logout, navigating")
         navigate("/login");
     }
 
