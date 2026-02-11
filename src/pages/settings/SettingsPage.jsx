@@ -23,10 +23,22 @@ export default function SettingsPage() {
     function handleChangePassword() {
         alert("Open change password modal/form")
     }
-    
+
     return (
-        <AppLayout title="Home">
-            <div>Settings</div>
+        <AppLayout title="Settings">
+            <div className="settingsPage">
+                <h1 className="pageTitle">Settings</h1>
+
+                <div className="settingsCard">
+                    <div className="settingsRow">
+                        <div className="settingsLabel">Email</div>
+                        <div className="settingsValue">{email}</div>
+                        <button className="secondaryBtn" onClick={handleChangeEmail}>
+                            Change Email
+                        </button>
+                    </div>
+                </div>
+            </div>
         </AppLayout>
     );
 }
