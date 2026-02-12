@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { loginRequest } from "../../api/authApi";
 import { useAuth } from "../../context/AuthContext";
 import "./LoginPage.css";
 
@@ -25,11 +26,11 @@ export default function LoginPage() {
         try {
             setIsLoading(true);
 
-            //Later hierbij terugkomen om aan te passen met backend call voor nu dummy code
-            await new Promise((r) => setTimeout(r, 600));
+            const data = await loginRequest ({ email, password });
+            const token = data.token || data.accesToken || data.jwt;
 
-            //Neppe token
-            login("demo-token-123");
+            //Token
+            login(token);
 
             //Navigeer naar dashboard na login
             navigate("/");
