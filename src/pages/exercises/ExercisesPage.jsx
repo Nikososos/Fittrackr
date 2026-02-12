@@ -3,46 +3,25 @@ import AppLayout from "../../components/layout/AppLayout";
 import ExerciseBrowserPanel from "../../components/exercises/ExerciseBrowserPanel";
 import ExerciseFilters from "../../components/exercises/ExerciseFilters";
 import ExerciseBrowserItem from "../../components/exercises/ExerciseBrowserItem";
+import { useAuth } from "../../context/AuthContext";
+import { getExercises } from "../../api/exercisesApi";
 import "./ExercisesPage.css";
-
-const EXERCISES = [
-    {
-        id: "ex1",
-        name: "Bench Press (Barbell)",
-        equipment: "Barbell",
-        muscleGroups: ["Chest", "Shoulders", "Triceps"],
-        instructions: [
-            "Lay flat on the bench with your feet on the ground.",
-            "Lower the bar to your mid chest",
-            "press the bar up until your elbows are locked"
-        ],
-    },
-    {
-        id: "ex2",
-        name: "Dumbell Curl",
-        equipment: "Dumbells",
-        muscleGroups: ["Biceps"],
-        instructions: [
-            "Stand tall with dumbells at your side",
-            "Curl the weights up without swinging",
-            "Lower slowly and repeat",
-        ],
-    },
-    {
-        id: "ex3",
-        name: "Seated Cable Row",
-        equipment: "Cable",
-        muscleGroups: ["Back", "Biceps"],
-        instructions: [
-            "Sit with a neutral spine and grip the handle",
-            "Pull handle towards your torso",
-            "Control the return",
-        ],
-    },
-];
 
 const MUSCLE_GROUPS = ["All", "Chest", "Back", "Shoulders", "Biceps", "Triceps"];
 
+function normalizeExercise(apiItem) {
+    const id = apiItem.id ?? apiItem.excercise.id;
+
+    return {
+        id,
+        name: apiItem.name ?? "Unnamed exercise",
+        equipment: apiItem.equipment ?? "-",
+        muscleGroups: [apiItem.target_muscle].filter(Boolean),
+        instructions: apiItem.instructions ?? [
+            "No instructions available yet."
+        ],
+    };
+}
 export default function ExcercisesPage() {
     const [selectedId, setSelectedID] = useState(EXERCISES[0].id);
     const [search, setSearch] = useState("");
