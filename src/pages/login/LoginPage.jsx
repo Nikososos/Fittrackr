@@ -27,7 +27,9 @@ export default function LoginPage() {
             setIsLoading(true);
 
             const data = await loginRequest ({ email, password });
+            console.log("LOGIN RESPONSE:", data);
             const token = data.token || data.accesToken || data.jwt;
+            if (!token) throw new Error("No token received from server");
 
             //Token
             login(token);

@@ -3,6 +3,10 @@
 const BASE_URL = import.meta.env.VITE_NOVI_BASE_URL;
 const PROJECT_ID = import.meta.env.VITE_NOVI_PROJECT_ID;
 
+console.log("PROJECT_ID:", import.meta.env.VITE_NOVI_PROJECT_ID);
+console.log("BASE_URL:", import.meta.env.VITE_NOVI_BASE_URL);
+
+
 function buildHeaders(token, extraHeaders) {
     return {
         "Content-Type": "application/json",
