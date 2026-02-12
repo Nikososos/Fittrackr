@@ -13,7 +13,7 @@ function normalizeExercise(apiItem) {
     const id = apiItem.id ?? apiItem.excercise_id;
 
     return {
-        id,
+        id: String(apiItem.exercise_id),
         name: apiItem.name ?? "Unnamed exercise",
         equipment: apiItem.equipment ?? "-",
         muscleGroups: [apiItem.target_muscle].filter(Boolean),
