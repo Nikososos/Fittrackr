@@ -1,11 +1,12 @@
 import AppLayout from "../../components/layout/AppLayout"
+import WorkoutsPage from "../workouts/WorkoutsPage";
 import "./DashboardPage.css"
 
 export default function DashboardPage() {
     return (
         <AppLayout title="Home">
             <div className="dashboardGrid">
-                <button className="startWorkoutBtn">
+                <button className="startWorkoutBtn" onClick={WorkoutsPage}>
                     Start new Workout
                 </button>
 
