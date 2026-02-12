@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import AppLayout from "../../components/layout/AppLayout";
 import ExerciseBrowserPanel from "../../components/exercises/ExerciseBrowserPanel";
 import ExerciseFilters from "../../components/exercises/ExerciseFilters";
@@ -7,10 +7,10 @@ import { useAuth } from "../../context/AuthContext";
 import { getExercises } from "../../api/exercisesApi";
 import "./ExercisesPage.css";
 
-const MUSCLE_GROUPS = ["All", "Chest", "Back", "Shoulders", "Biceps", "Triceps"];
+const DEFAULT_MUSCLE_GROUPS = ["All", "Chest", "Back", "Shoulders", "Biceps", "Triceps"];
 
 function normalizeExercise(apiItem) {
-    const id = apiItem.id ?? apiItem.excercise.id;
+    const id = apiItem.id ?? apiItem.excercise_id;
 
     return {
         id,
@@ -23,12 +23,56 @@ function normalizeExercise(apiItem) {
     };
 }
 export default function ExcercisesPage() {
-    const [selectedId, setSelectedID] = useState(EXERCISES[0].id);
+    const { token } = useAuth();
+
+    const [exercises, setExcercises] = useState([]);
+    const [selectedId, setSelectedID] = useState(null);
+
     const [search, setSearch] = useState("");
     const [muscleGroup, setMuscleGroup] = useState("All");
 
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState("");
+
+    // Load excercises from backend
+    useEffect (() => {
+        async function load() {
+            try {
+                setError("");
+                setIsLoading(true);
+
+                const data = await getExercises({token});
+                
+                const list = Array.isArray(data) ? data : data?.data || [];
+
+                const normalized = list.map(normalizeExercise);
+                setExcercises(normalized);
+
+                //set default selection to first item if nothing is selected yet
+                if (!selectedId && normalized.length > 0) {
+                    setSelectedID(normalized[0].id);
+                }
+            // error handling if nothing loads in
+            } catch (e) {
+              console.error(e);
+              setError("Could not load exercises from backend.");  
+            } finally {
+              setIsLoading(false);
+            }
+        }
+
+        load();
+    }, [token]);
+
+    const muscleOptions = useMemo (() => {
+        const set = new Set(DEFAULT_MUSCLE_GROUPS);
+        exercises.forEach((ex) => ex.muscleGroups.forEach((m) => set.add(m)));
+        return Array.from(set);
+    }, [exercises]);
+
+
     const filteredExercises = useMemo(() => {
-        return EXERCISES.filter((ex) => {
+        return exercises.filter((ex) => {
             const matchesSearch =
                 ex.name.toLowerCase().includes(search.toLowerCase().trim());
             
@@ -37,10 +81,10 @@ export default function ExcercisesPage() {
             
             return matchesSearch && matchesMuscle;
         });
-    }, [search, muscleGroup]);
+    }, [exercises, search, muscleGroup]);
 
     const selectedExercise =
-        EXERCISES.find((e) => e.id === selectedId) || filteredExercises[0] || null;
+        exercises.find((e) => e.id === selectedId) || filteredExercises[0] || null;
 
     return (
         <AppLayout title="Exercises">
@@ -48,9 +92,15 @@ export default function ExcercisesPage() {
                 <div className="exDetail">
                     <h1 className="PageTitle">Exercises</h1>
 
-                    {!selectedExercise ? (
+                    {isLoading && <div>Loading exercises...</div>}
+                    {error && <div className="errorbanner">{error}</div>}
+                    
+                    {!isLoading && !error && !selectedExercise ? (
                         <div className="empyDetail">Select an exercise</div>
                     ) : (
+                       !isLoading &&
+                       !error &&
+                       selectedExercise && (             
                         <>
                             <h2 className="exerciseTitle">{selectedExercise.name}</h2>
 
@@ -75,6 +125,7 @@ export default function ExcercisesPage() {
 
                             <button className="primaryBtn">Add to workout</button>
                         </>
+                       )
                     )}
                 </div>
 
@@ -82,7 +133,7 @@ export default function ExcercisesPage() {
                     <ExerciseFilters
                         muscleGroupValue={muscleGroup}
                         onMuscleGroupChange={setMuscleGroup}
-                        muscleGroupOptions={MUSCLE_GROUPS}
+                        muscleGroupOptions={muscleOptions}
                         searchValue={search}
                         onSearchChange={setSearch}
                         showMuscleGroup={true}
