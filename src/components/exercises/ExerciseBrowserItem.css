@@ -13,11 +13,11 @@
     color: #2563eb;
 }
 
-exItem:hover {
+.exItem:hover {
     background: #e8eeff;
 }
 
-exItemRight {
+.exItemRight {
     font-size: 18px;
     font-weight: 900;
 }

@@ -82,7 +82,7 @@ export default function WorkoutsPage() {
                                             </button>
                                             <button
                                             className="menuItem menItemDanger"
-                                            onClick={() => handleDelte(w.id)}
+                                            onClick={() => handleDelete(w.id)}
                                             >
                                                 Delete
                                             </button>

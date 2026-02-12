@@ -6,7 +6,7 @@ export default function AppLayout({ title, children }) {
         <div className="appShell">
             <Sidebar />
             <main className="appMain">
-                {title && <h1 className="PageTitle">{title}</h1>}
+                {title && <h1 className="pageTitle">{title}</h1>}
                 <div className="pageContent">{children}</div>
             </main>
         </div>

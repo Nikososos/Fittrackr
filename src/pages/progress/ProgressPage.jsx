@@ -144,7 +144,7 @@ export default function ProgressPage() {
                                         <span className="dayNumber">{cell.day}</span>
 
                                         {cell.hasWorkout && !isSelected && (
-                                            <span className="workoutDot"/>
+                                            <span className="workoutDot"/> //Non selected workout days get blue dot
                                         )}
                                     </button>
                                 );
