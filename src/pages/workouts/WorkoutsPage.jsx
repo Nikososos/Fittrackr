@@ -1,7 +1,18 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AppLayout from "../../components/layout/AppLayout";
+import { useAuth } from "../../context/AuthContext";
+import { createWorkout, deleteWorkout, getWorkouts } from "../../api/exercisesApi";
 import "./WorkoutsPage.css";
+
+function normalizeWorkout(apiItem) {
+    return {
+        id: String(apiItem.workout_id ?? apiItem.id),
+        userId: apiItem.user_id ?? null,
+        title: apiItem.title ?? "Untitled workout",
+    };
+}
+
 
 export default function WorkoutsPage() {
     const navigate = useNavigate();
