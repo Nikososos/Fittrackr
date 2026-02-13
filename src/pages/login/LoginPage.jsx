@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { loginRequest } from "../../api/authApi";
 import { useAuth } from "../../context/AuthContext";
 import "./LoginPage.css";
+import { getUsers } from "../../api/usersApi";
 
 export default function LoginPage() {
     const navigate = useNavigate();
@@ -10,7 +11,6 @@ export default function LoginPage() {
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-
     const [error, setError] = useState("");
     const [isLoading, setIsLoading] = useState(false);
 
@@ -18,7 +18,10 @@ export default function LoginPage() {
         e.preventDefault();
         setError("");
 
-        if (!email.trim() || !password.trim()) {
+        const emailNormalized = email.trim().toLowerCase();
+        const passwordNormalized = password.trim();
+
+        if (!emailNormalized || !passwordNormalized) {
             setError("Please enter both email and password.");
             return;
         }
@@ -26,19 +29,36 @@ export default function LoginPage() {
         try {
             setIsLoading(true);
 
-            const data = await loginRequest ({ email, password });
-            console.log("LOGIN RESPONSE:", data);
-            const token = data.token || data.accesToken || data.jwt;
+            const data = await loginRequest({
+                email: emailNormalized,
+                password: passwordNormalized,
+            });
+
+            const token = data.token || data.accessToken || data.jwt;
             if (!token) throw new Error("No token received from server");
 
+            const users = await getUsers({ token });
+            const userList = Array.isArray(users) ? users : users?.data || [];
+
+            const me = userList.find(
+                (u) => (u.email ?? "").trim().toLowerCase() === emailNormalized
+            );
+
+            if (!me?.id) {
+                throw new Error("Logged in, but could not read userId from token.");
+            }
             //Token
-            login(token);
+            console.log("FOUND USER", me);
+            login(token, me.id);
+            console.log("Saved userId", localStorage.getItem("userId"));
 
             //Navigeer naar dashboard na login
             navigate("/");
-        } catch (err) {
+        }   catch (err) {
+            console.error("LOGIN ERROR: ", err);
+            setError(err?.message || "Login failed. Please check your details");
             setError("Login failed. Please check your details");
-        } finally {
+        }   finally {
             setIsLoading(false);
         }
     }
@@ -75,7 +95,7 @@ export default function LoginPage() {
                         autoComplete="current-password"
                     />
 
-                    {error && <div classname="errorbanner">{error}</div>}
+                    {error && <div className="errorbanner">{error}</div>}
 
                     <div className="buttonRow">
                         <button className="btnPrimary" type="submit" disabled={isLoading}>

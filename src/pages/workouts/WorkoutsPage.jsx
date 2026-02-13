@@ -58,8 +58,22 @@ export default function WorkoutsPage() {
     async function handleStartNew() {
         try {
             setError("");
+
+            // Load existing workouts
+            const data = await getWorkouts({ token });
+            const list = Array.isArray(data) ? data : [];
+
+            // Determine next workout_id
+            const maxId = list.reduce((max, w) => {
+                const id = Number(w.workout_id ?? w.id ?? 0);
+                return id > max ? id : max;
+            }, 0);
+
+            const nextId = maxId + 1;
+            
             const payload = {
-                user_id: userId,
+                workout_id: nextId,
+                user_id: Number(userId),
                 title: "new workout",
             };
 
@@ -89,8 +103,6 @@ export default function WorkoutsPage() {
             setError("Could not delete workout");
         }
     }
-
-    const sortedWorkouts = useMemo(() => workouts, [workouts]);
 
     return (
         <AppLayout title="Workouts">
