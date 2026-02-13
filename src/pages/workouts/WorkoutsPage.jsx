@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AppLayout from "../../components/layout/AppLayout";
 import { useAuth } from "../../context/AuthContext";
-import { createWorkout, deleteWorkout, getWorkouts } from "../../api/exercisesApi";
+import { createWorkout, deleteWorkout, getWorkouts } from "../../api/workoutsApi";
 import "./WorkoutsPage.css";
 
 function normalizeWorkout(apiItem) {
@@ -16,25 +16,62 @@ function normalizeWorkout(apiItem) {
 
 export default function WorkoutsPage() {
     const navigate = useNavigate();
+    const { token, userId } = useAuth();
 
-    // Demo data 
-    const [workouts, setWorkouts] = useState ([
-        { id: "w1", name: "Upperbody" },
-        { id: "w2", name: "Lowerbody" },
-    ]);
-
+    const [workouts, setWorkouts] = useState([]);
     const [menuOpenForId, setMenuOpenForId] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState("");
 
     const hasWorkouts = workouts.length > 0;
 
-    function handleStartNew() {
-        const newWorkout = {
-            id: crypto.randomUUID(),
-            name: "New workout",
-        };
-        setWorkouts((prev) => [newWorkout, ...prev]);
 
-        navigate(`/workouts/${newWorkout.id}`);
+    // Load Workouts
+    useEffect(() => {
+        async function load() {
+            try {
+                setError("");
+                setIsLoading(true);
+
+                const data = await getWorkouts({ token });
+                const list = Array.isArray(data) ? data : data?.data || [];
+                const normalized = list.map(normalizeWorkout);
+
+                setWorkouts(normalized);
+            } catch (e) {
+              console.error(e);
+              setError("Could not load workouts from backend");
+            } finally {
+              setIsLoading(false);
+            }
+        }
+
+        load();
+    },   [token]);
+
+    // filter by user_id
+    const visibleWorkouts = useMemo(() => {
+        return workouts.filter((w) => String(w.userId) === String(userId));
+    }, [workouts, userId]);
+
+
+    async function handleStartNew() {
+        try {
+            setError("");
+            const payload = {
+                user_id: userId,
+                title: "new workout",
+            };
+
+            const created = await createWorkout({ token, workout: payload });
+            const newWorkout = normalizeWorkout(created);
+
+            setWorkouts((prev) => [newWorkout, ...prev]);
+            navigate(`/workouts/${newWorkout.id}`);
+        }   catch(e) {
+            console.error(e);
+            setError("Could not create workout");
+        }
     }
 
     function handleEdit(id) {
@@ -42,9 +79,15 @@ export default function WorkoutsPage() {
         navigate(`/workouts/${id}`);
     }
 
-    function handleDelete(id) {
-        setWorkouts((prev) => prev.filter((w) => w.id !== id));
-        setMenuOpenForId(null);
+    async function handleDelete(id) {
+        try {
+            await deleteWorkout({ token, id });
+            setWorkouts((prev) => prev.filter((w) => w.id !== id));
+            setMenuOpenForId(null); 
+        }   catch(e) {
+            console.error(e);
+            setError("Could not delete workout");
+        }
     }
 
     const sortedWorkouts = useMemo(() => workouts, [workouts]);
