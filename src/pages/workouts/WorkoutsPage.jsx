@@ -102,7 +102,10 @@ export default function WorkoutsPage() {
                     </button>
                 </div>
 
-                {!hasWorkouts ? (
+                {error && <div className="errorbanner">{error}</div>}
+                {isLoading && <p>Loading workouts...</p>}
+
+                {!isLoading && visibleWorkouts.length === 0 ? (
                   <div className="emptyState">
                     <h2>No workouts found</h2>
                     <p>Create your first workout to start tracking your training.</p>
@@ -112,21 +115,19 @@ export default function WorkoutsPage() {
                   </div>  
                 ) : (
                     <div className="workoutList">
-                        {sortedWorkouts.map((w) => (
+                        {visibleWorkouts.map((w) => (
                             <div key={w.id} className="workoutRow">
                                 <button className="workoutName" onClick={() => handleEdit(w.id)}>
-                                    {w.name}
+                                    {w.title}
                                 </button>
 
                                 <div className="menuWrap">
                                     <button
                                         className="menuBtn"
-                                        onClick={() =>
-                                            setMenuOpenForId((cur) => (cur === w.id ? null : w.id))
-                                        }
+                                        onClick={() => setMenuOpenForId((cur) => (cur === w.id ? null : w.id))}
                                         aria-label="Open menu"
                                     >
-                                        open Menu
+                                        ⋮
                                     </button>
 
                                     {menuOpenForId === w.id && (
