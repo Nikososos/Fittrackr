@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import AppLayout from "../../components/layout/AppLayout";
 import { useAuth } from "../../context/AuthContext";
 import { getExercises } from "../../api/exercisesApi";
@@ -26,6 +26,7 @@ function createWorkoutExerciseState(exercise) {
 }
 
 export default function WorkoutsBuilderPage() {
+    const navigate = useNavigate();
     const { token } = useAuth();
     const { id } = useParams();
 
@@ -229,6 +230,10 @@ export default function WorkoutsBuilderPage() {
         }
     }
 
+    function handleBack() {
+        navigate("/workouts");
+    }
+
     return (
         <AppLayout>
             <div className="wbPage">
@@ -242,10 +247,15 @@ export default function WorkoutsBuilderPage() {
                             placeholder="Workout Name"
                         />
                     </div>
-
-                    <button className="primaryBtn" onClick={handleSave}>
-                        Save Workout
-                    </button>
+                    
+                    <div className="wbHeaderActions">
+                        <button className="secondaryBtn" onClick={handleBack}>
+                            Back
+                        </button>
+                        <button className="primaryBtn" onClick={handleSave}>
+                            Save Workout
+                        </button>
+                    </div>
                 </div>
 
                 <div className="wbGrid">
