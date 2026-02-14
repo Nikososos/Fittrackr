@@ -88,7 +88,6 @@ export default function ExercisesPage() {
         <AppLayout title="Exercises">
             <div className="exercisesPage">
                 <div className="exDetail">
-                    <h1 className="PageTitle">Exercises</h1>
 
                     {isLoading && <div>Loading exercises...</div>}
                     {error && <div className="errorbanner">{error}</div>}

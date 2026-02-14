@@ -91,7 +91,6 @@ export default function WorkoutsPage() {
     <AppLayout title="Workouts">
       <div className="workoutsPage">
         <div className="workoutsHeader">
-          <h1 className="pageTitle">Workouts</h1>
           <button className="primaryBtn" onClick={handleStartNew}>
             Start new workout
           </button>

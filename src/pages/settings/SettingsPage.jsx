@@ -29,7 +29,6 @@ export default function SettingsPage() {
     return (
         <AppLayout title="Settings">
             <div className="settingsPage">
-                <h1 className="pageTitle">Settings</h1>
 
                 <div className="settingsCard">
                     <div className="settingsRow">
