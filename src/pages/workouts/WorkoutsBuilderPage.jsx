@@ -154,12 +154,25 @@ export default function WorkoutsBuilderPage() {
     }
 
     function updateSetField(workoutExerciseID, setId, field, value) {
+        let sanitizedValue = value;
+
+        // allow numbers + decimal point
+        if (field === "weight") {
+            sanitizedValue = value.replace(/[^0-9.]/g, "");
+        }
+
+        // allow only integers
+        if (field ==="reps")
+            sanitizedValue = value.replace(/[^0-9]/g, "");
+
         setWorkoutExercises((prev) => 
             prev.map((we) => {
                 if (we.id !== workoutExerciseID) return we;
                 return {
                     ...we,
-                    sets: we.sets.map((s) => (s.id === setId ? { ...s, [field]: value } : s)),
+                    sets: we.sets.map((s) =>
+                        s.id === setId ? { ...s, [field]: sanitizedValue } : s
+                    ),
                 };
             })
         );
@@ -271,22 +284,26 @@ export default function WorkoutsBuilderPage() {
 
                                                     <input
                                                         className="setInput"
+                                                        type="number"
+                                                        step="0.1"
+                                                        min="0"
                                                         value={s.weight}
                                                         onChange={(e) =>
                                                             updateSetField(we.id, s.id, "weight", e.target.value)
                                                         }
                                                         placeholder="kg"
-                                                        inputMode="decimal"
                                                     />
 
                                                     <input
                                                         className="setInput"
+                                                        type="number"
+                                                        min="0"
+                                                        step="1"
                                                         value={s.reps}
                                                         onChange={(e) => 
                                                             updateSetField(we.id, s.id, "reps", e.target.value)
                                                         }
                                                         placeholder="reps"
-                                                        inputMode="numeric"
                                                     />
 
                                                     <button
