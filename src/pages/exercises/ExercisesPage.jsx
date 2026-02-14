@@ -120,8 +120,6 @@ export default function ExercisesPage() {
                                     ))}
                                 </ol>
                             </div>
-
-                            <button className="primaryBtn">Add to workout</button>
                         </>
                        )
                     )}
