@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import AppLayout from "../../components/layout/AppLayout";
 import { useAuth } from "../../context/AuthContext";
+import { getExercises } from "../../api/exercisesApi";
 import { patchWorkout } from "../../api/workoutsApi";
 import { getWorkouts } from "../../api/workoutsApi";
 import { createWorkoutExercise, patchWorkoutExercise, getWorkoutExercises } from "../../api/workoutExercisesApi";
@@ -9,17 +10,6 @@ import ExerciseBrowserPanel from "../../components/exercises/ExerciseBrowserPane
 import ExerciseFilters from "../../components/exercises/ExerciseFilters";
 import ExerciseBrowserItem from "../../components/exercises/ExerciseBrowserItem";
 import "./WorkoutsBuilderPage.css";
-
-
-// Dummy data used, connect to db later//
-
-const EXERCISE_LIBRARY = [
-    { id: "1", name: "Bench Press (Barbell)", muscleGroup: "Chest" },
-    { id: "2", name: "Dumbell Curl", muscleGroup: "Biceps" },
-    { id: "3", name: "Seated Cable Row", muscleGroup: "Back" },
-    { id: "4", name: "Lat Pulldown", muscleGroup:"Back" },
-    { id: "5", name: "Shoulder Press", muscleGroup: "Shoulders" },
-];
 
 const MUSCLE_GROUPS = ["All", "Chest", "Back", "Shoulders", "Biceps", "Triceps"];
 
@@ -44,10 +34,27 @@ export default function WorkoutsBuilderPage() {
     const [workoutName, setWorkoutName ] = useState ("");
     const [workoutExercises, setWorkoutExercises] = useState([]);
 
+    const [exerciseLibrary, setExerciseLibrary] = useState([];)
+
 
     // Browse panel state
     const [muscleGroup, setMuscleGroup] = useState("All");
     const [search, setSearch] = useState("");
+
+    useEffect(() => {
+        async function loadExercises() {
+            try {
+                const data = await getExercises( { token });
+                const list = Array.isArray(data) ? data : data?.data || [];
+                setExerciseLibrary(list);
+            }   catch (e) {
+                console.error("Could not load exercises", e);
+                setExerciseLibrary([]);
+            }
+        }
+
+        loadExercises();
+    }, [token]);
 
     useEffect(() => {
         if (!token || !id) return;
@@ -75,7 +82,7 @@ export default function WorkoutsBuilderPage() {
             parsedSets = [];
         }
 
-        const exMeta = EXERCISE_LIBRARY.find((e) => String(e.id) === String(we.exerciseId));
+        const exMeta = exerciseLibrary.find((e) => String(e.id) === String(we.exerciseId));
 
         return {
             id: crypto.randomUUID(), // IMPORTANT: record id for PATCH/DELETE
@@ -99,14 +106,14 @@ export default function WorkoutsBuilderPage() {
     const filteredLibrary = useMemo (() => {
         const q = search.toLowerCase().trim();
         
-        return EXERCISE_LIBRARY.filter((e) => {
+        return exerciseLibrary.filter((e) => {
             const matchesSearch = e.name.toLowerCase().includes(q);
             const matchesMuscle =
                 muscleGroup === "All" || e.muscleGroup === muscleGroup;
             
             return matchesSearch && matchesMuscle;
         });
-    }, [search, muscleGroup]);
+    }, [search, muscleGroup, exerciseLibrary]);
 
     function addExcerciseToWorkout(exercise) {
         setWorkoutExercises((prev) => {
