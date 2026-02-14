@@ -10,19 +10,17 @@ import "./ExercisesPage.css";
 const DEFAULT_MUSCLE_GROUPS = ["All", "Chest", "Back", "Shoulders", "Biceps", "Triceps"];
 
 function normalizeExercise(apiItem) {
-    const id = apiItem.id ?? apiItem.excercise_id;
-
     return {
-        id: String(apiItem.exercise_id),
+        id: String(apiItem.id),
         name: apiItem.name ?? "Unnamed exercise",
         equipment: apiItem.equipment ?? "-",
-        muscleGroups: [apiItem.target_muscle].filter(Boolean),
+        muscleGroups: [apiItem.targetMuscle].filter(Boolean),
         instructions: apiItem.instructions ?? [
             "No instructions available yet."
         ],
     };
 }
-export default function ExcercisesPage() {
+export default function ExercisesPage() {
     const { token } = useAuth();
 
     const [exercises, setExcercises] = useState([]);

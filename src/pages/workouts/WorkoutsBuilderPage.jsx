@@ -11,7 +11,6 @@ import ExerciseFilters from "../../components/exercises/ExerciseFilters";
 import ExerciseBrowserItem from "../../components/exercises/ExerciseBrowserItem";
 import "./WorkoutsBuilderPage.css";
 
-const MUSCLE_GROUPS = ["All", "Chest", "Back", "Shoulders", "Biceps", "Triceps"];
 
 function createSet() {
     return { id: crypto.randomUUID(), weight: "", reps: "" };
@@ -34,8 +33,15 @@ export default function WorkoutsBuilderPage() {
     const [workoutName, setWorkoutName ] = useState ("");
     const [workoutExercises, setWorkoutExercises] = useState([]);
 
-    const [exerciseLibrary, setExerciseLibrary] = useState([];)
+    const [exerciseLibrary, setExerciseLibrary] = useState([]);
 
+    const muscleGroupOptions = useMemo(() => {
+        const unique = Array.from(
+            new Set((exerciseLibrary || []).map((e) => e.targetMuscle).filter(Boolean))
+        ).sort();
+
+        return ["All", ...unique];
+    },  [exerciseLibrary]);
 
     // Browse panel state
     const [muscleGroup, setMuscleGroup] = useState("All");
@@ -308,7 +314,7 @@ export default function WorkoutsBuilderPage() {
                         <ExerciseFilters
                             muscleGroupValue={muscleGroup}
                             onMuscleGroupChange={setMuscleGroup}
-                            muscleGroupOptions={MUSCLE_GROUPS}
+                            muscleGroupOptions={muscleGroupOptions}
                             searchValue={search}
                             onSearchChange={setSearch}
                             showMuscleGroup={true}
