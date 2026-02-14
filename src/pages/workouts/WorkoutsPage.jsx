@@ -53,23 +53,7 @@ export default function WorkoutsPage() {
   );
 
   async function handleStartNew() {
-    try {
-      setError("");
-
-      const payload = {
-        userId: Number(userId),
-        title: "New workout",
-      };
-
-      const created = await createWorkout({ token, workout: payload });
-      const newWorkout = normalizeWorkout(created);
-
-      setWorkouts((prev) => [newWorkout, ...prev]);
-      navigate(`/workouts/${newWorkout.id}`);
-    } catch (e) {
-      console.error(e);
-      setError("Could not create workout");
-    }
+    navigate("/workouts/new");
   }
 
   function handleEdit(id) {
@@ -93,7 +77,7 @@ export default function WorkoutsPage() {
         <div className="workoutsHeader">
 
             {!isLoading && visibleWorkouts.length > 0 && (
-                <button className="primaryBtn" onClick={handleStartNew}>
+                <button type="button" className="primaryBtn" onClick={handleStartNew}>
                     Start new workout
                 </button>
             )}

@@ -3,10 +3,9 @@ import { useParams, useNavigate } from "react-router-dom";
 import AppLayout from "../../components/layout/AppLayout";
 import { useAuth } from "../../context/AuthContext";
 import { getExercises } from "../../api/exercisesApi";
-import { patchWorkout } from "../../api/workoutsApi";
-import { getWorkouts } from "../../api/workoutsApi";
+import { createWorkout, getWorkouts, patchWorkout } from "../../api/workoutsApi";
 import { createWorkoutCompletion } from "../../api/workoutcompletionsApi";
-import { createWorkoutExercise, patchWorkoutExercise, getWorkoutExercises } from "../../api/workoutExercisesApi";
+import { createWorkoutExercise, patchWorkoutExercise, getWorkoutExercises, deleteWorkoutExercise } from "../../api/workoutExercisesApi";
 import ExerciseBrowserPanel from "../../components/exercises/ExerciseBrowserPanel";
 import ExerciseFilters from "../../components/exercises/ExerciseFilters";
 import ExerciseBrowserItem from "../../components/exercises/ExerciseBrowserItem";
@@ -65,7 +64,7 @@ export default function WorkoutsBuilderPage() {
     }, [token]);
 
     useEffect(() => {
-        if (!token || !id) return;
+        if (!token || !id || id === "new") return;
 
         async function load() {
         // 1) load workout title
@@ -117,7 +116,7 @@ export default function WorkoutsBuilderPage() {
         return exerciseLibrary.filter((e) => {
             const matchesSearch = e.name.toLowerCase().includes(q);
             const matchesMuscle =
-                muscleGroup === "All" || e.targetMuscleGroup === muscleGroup;
+                muscleGroup === "All" || e.targetMuscle === muscleGroup;
             
             return matchesSearch && matchesMuscle;
         });
@@ -193,22 +192,55 @@ export default function WorkoutsBuilderPage() {
             })
         );
     }
+
+    //checks if workouts already exist
+    async function ensureWorkoutExists() {
+        //If editing existing workout return id
+        if (id !== "new") return Number(id);
+
+        const title = workoutName.trim() || "New Workout";
+
+        const created = await createWorkout({
+            token,
+            workout: {
+                userId: Number(userId),
+                title,
+            },
+        });
+
+        // Move URL from /workouts/new > /workouts/realId so refresh works
+        navigate(`/workouts/${created.id}`, { replace: true });
+
+        return Number(created.id);
+    }
     
     // save workout with changes made
     async function handleSave() {
+        console.log("HANDLE SAVE CALLED");
         try {
             const title = workoutName.trim() || "New workout";
 
-            await patchWorkout({
-                token,
-                id,
-                patch: { title }
-            });
+            const workoutId = await ensureWorkoutExists();
+
+            // Only patch if it already existed; if it was just created, title is already set
+            if (id !== "new") {
+                await patchWorkout({ token, id: workoutId, patch: { title }});
+            }
 
             const allWE = await getWorkoutExercises({ token });
             const existingList = Array.isArray(allWE) ? allWE : allWE?.data || [];
-            const existing = existingList.filter((we) => String(we.workoutId) === String(id));
+            const existing = existingList.filter((we) => String(we.workoutId) === String(workoutId));
+            // Delete backend Rows that user removed in the UI
+            const uiExerciseIds = new Set(workoutExercises.map((we) => String(we.exerciseId)));
 
+            const toDelete = existing.filter(
+                (row) => !uiExerciseIds.has(String(row.exerciseId))
+            );
+
+            for (const row of toDelete) {
+                await deleteWorkoutExercise({ token, id: row.id })
+            }
+            
             for (const we of workoutExercises) {
                 const setsToSave = we.sets.map((s) => ({
                     weight: Number(s.weight) || 0,
@@ -231,7 +263,7 @@ export default function WorkoutsBuilderPage() {
                     await createWorkoutExercise({
                         token,
                         item: {
-                            workoutId: Number(id),
+                            workoutId: Number(workoutId),
                             exerciseId: Number(we.exerciseId),
                             sets: JSON.stringify(setsToSave),
                         },
@@ -252,6 +284,8 @@ export default function WorkoutsBuilderPage() {
                 alert("You must add at least one exercise");
                 return;
             }
+
+            const workoutId = await ensureWorkoutExists();
 
             // validate all sets
             for (const we of workoutExercises) {
@@ -283,7 +317,7 @@ export default function WorkoutsBuilderPage() {
 
             const completion = {
                 userId: Number(userId),
-                workoutId: Number(id),
+                workoutId: Number(workoutId),
                 date: todayISO(),
                 bestExerciseId,
                 bestValue,
@@ -320,13 +354,13 @@ export default function WorkoutsBuilderPage() {
                     </div>
                     
                     <div className="wbHeaderActions">
-                        <button className="secondaryBtn" onClick={handleFinishWorkout}>
+                        <button type="button" className="secondaryBtn" onClick={handleFinishWorkout}>
                             Finish Workout
                         </button>
-                        <button className="secondaryBtn" onClick={handleBack}>
+                        <button type="button" className="secondaryBtn" onClick={handleBack}>
                             Back
                         </button>
-                        <button className="primaryBtn" onClick={handleSave}>
+                        <button type="button" className="primaryBtn" onClick={handleSave}>
                             Save Workout
                         </button>
                     </div>
