@@ -121,9 +121,9 @@ export default function WorkoutsBuilderPage() {
         });
     }, [search, muscleGroup, exerciseLibrary]);
 
-    function addExcerciseToWorkout(exercise) {
+    function addExerciseToWorkout(exercise) {
         setWorkoutExercises((prev) => {
-            const alreadyAdded = prev.some((we) => we.exerciseId === exercise.id);
+            const alreadyAdded = prev.some((we) => String(we.exerciseId) === String(exercise.id));
             if (alreadyAdded) return prev; // avoid duplicates
             return [...prev, createWorkoutExerciseState(exercise)];
         });
@@ -326,7 +326,7 @@ export default function WorkoutsBuilderPage() {
                                     key={ex.id}
                                     text={ex.name}
                                     right="+"
-                                    onClick={() => addExcerciseToWorkout(ex)}
+                                    onClick={() => addExerciseToWorkout(ex)}
                                 />
                             ))}
                         </div>
