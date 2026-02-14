@@ -75,12 +75,12 @@ export default function WorkoutsBuilderPage() {
             parsedSets = [];
         }
 
-        const exMeta = EXERCISE_LIBRARY.find((e) => String(e.id) === String(we.excerciseId));
+        const exMeta = EXERCISE_LIBRARY.find((e) => String(e.id) === String(we.exerciseId));
 
         return {
             id: crypto.randomUUID(), // IMPORTANT: record id for PATCH/DELETE
             workoutExerciseId: we.workoutExerciseId, // optional
-            exerciseId: String(we.excerciseId),
+            exerciseId: Number(we.exerciseId),
             name: exMeta?.name || `Exercise ${we.exerciseId}`,
             sets: parsedSets.map((s) => ({
                 id: crypto.randomUUID(),
