@@ -1,8 +1,10 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import AppLayout from "../../components/layout/AppLayout";
 import { useAuth } from "../../context/AuthContext";
 import { patchWorkout } from "../../api/workoutsApi";
+import { getWorkouts } from "../../api/workoutsApi";
+import { createWorkoutExercise, patchWorkoutExercise, getWorkoutExercises } from "../../api/workoutExercisesApi";
 import ExerciseBrowserPanel from "../../components/exercises/ExerciseBrowserPanel";
 import ExerciseFilters from "../../components/exercises/ExerciseFilters";
 import ExerciseBrowserItem from "../../components/exercises/ExerciseBrowserItem";
@@ -12,23 +14,23 @@ import "./WorkoutsBuilderPage.css";
 // Dummy data used, connect to db later//
 
 const EXERCISE_LIBRARY = [
-    { id: "ex1", name: "Bench Press (Barbell)", muscleGroup: "Chest" },
-    { id: "ex2", name: "Dumbell Curl", muscleGroup: "Biceps" },
-    { id: "ex3", name: "Seated Cable Row", muscleGroup: "Back" },
-    { id: "ex4", name: "Lat Pulldown", muscleGroup:"Back" },
-    { id: "ex5", name: "Shoulder Press", muscleGroup: "Shoulders" },
+    { id: "1", name: "Bench Press (Barbell)", muscleGroup: "Chest" },
+    { id: "2", name: "Dumbell Curl", muscleGroup: "Biceps" },
+    { id: "3", name: "Seated Cable Row", muscleGroup: "Back" },
+    { id: "4", name: "Lat Pulldown", muscleGroup:"Back" },
+    { id: "5", name: "Shoulder Press", muscleGroup: "Shoulders" },
 ];
 
 const MUSCLE_GROUPS = ["All", "Chest", "Back", "Shoulders", "Biceps", "Triceps"];
 
 function createSet() {
-    return { id: crypto.randomUUID(), weigth: "", reps: "" };
+    return { id: crypto.randomUUID(), weight: "", reps: "" };
 }
 
-function createWorkoutExercise(exercise) {
+function createWorkoutExerciseState(exercise) {
     return {
         id: crypto.randomUUID(),
-        exerciseId: exercise.id,
+        exerciseId: String(exercise.id),
         name: exercise.name,
         sets: [createSet(), createSet(), createSet()],
     };
@@ -38,17 +40,61 @@ export default function WorkoutsBuilderPage() {
     const { token } = useAuth();
     const { id } = useParams();
 
-    // To solve issues now use local workout state (fetch later through backend using workoutId)
-    const [workoutName, setWorkoutName ] = useState ("Upperbody");
-    const [workoutExercises, setWorkoutExercises] = useState([
-        createWorkoutExercise(EXERCISE_LIBRARY[0]),
-        createWorkoutExercise(EXERCISE_LIBRARY[1]),
-    ]);
+    
+    const [workoutName, setWorkoutName ] = useState ("");
+    const [workoutExercises, setWorkoutExercises] = useState([]);
 
 
     // Browse panel state
     const [muscleGroup, setMuscleGroup] = useState("All");
     const [search, setSearch] = useState("");
+
+    useEffect(() => {
+        if (!token || !id) return;
+
+        async function load() {
+        // 1) load workout title
+        const workouts = await getWorkouts({ token });
+        const w = (Array.isArray(workouts) ? workouts : []).find(
+            (x) => String(x.id) === String(id)
+        );
+        if (w) setWorkoutName(w.title ?? "");
+
+        // 2) load workout_exercises for this workout
+        const allWE = await getWorkoutExercises({ token });
+        const list = (Array.isArray(allWE) ? allWE : allWE?.data || []).filter(
+            (we) => String(we.workoutId) === String(id)
+        );
+
+        // map backend rows -> UI state
+        const mapped = list.map((we) => {
+            let parsedSets = [];
+        try {
+            parsedSets = JSON.parse(we.sets || "[]");
+        } catch {
+            parsedSets = [];
+        }
+
+        const exMeta = EXERCISE_LIBRARY.find((e) => String(e.id) === String(we.excerciseId));
+
+        return {
+            id: crypto.randomUUID(), // IMPORTANT: record id for PATCH/DELETE
+            workoutExerciseId: we.workoutExerciseId, // optional
+            exerciseId: String(we.excerciseId),
+            name: exMeta?.name || `Exercise ${we.exerciseId}`,
+            sets: parsedSets.map((s) => ({
+                id: crypto.randomUUID(),
+                weight: String(s.weight ?? ""),
+                reps: String(s.reps ?? ""),
+            })),
+        };
+    });
+
+    setWorkoutExercises(mapped);
+  }
+
+  load().catch(console.error);
+}, [token, id]);
 
     const filteredLibrary = useMemo (() => {
         const q = search.toLowerCase().trim();
@@ -66,7 +112,7 @@ export default function WorkoutsBuilderPage() {
         setWorkoutExercises((prev) => {
             const alreadyAdded = prev.some((we) => we.exerciseId === exercise.id);
             if (alreadyAdded) return prev; // avoid duplicates
-            return [...prev, createWorkoutExercise(exercise)];
+            return [...prev, createWorkoutExerciseState(exercise)];
         });
     }
 
@@ -116,6 +162,39 @@ export default function WorkoutsBuilderPage() {
                 patch: { title }
             });
 
+            const allWE = await getWorkoutExercises({ token });
+            const existingList = Array.isArray(allWE) ? allWE : allWE?.data || [];
+            const existing = existingList.filter((we) => String(we.workoutId) === String(id));
+
+            for (const we of workoutExercises) {
+                const setsToSave = we.sets.map((s) => ({
+                    weight: Number(s.weight) || 0,
+                    reps: Number(s.reps) || 0,
+                }));
+
+                const match = existing.find(
+                    (x) => String(x.exerciseId) === String(we.exerciseId)
+                );
+
+                if (match) {
+                    // PATCH existing row
+                    await patchWorkoutExercise({
+                        token,
+                        id: match.id,
+                        patch: { sets: JSON.stringify(setsToSave) },
+                    });
+                } else {
+                    // POST new row
+                    await createWorkoutExercise({
+                        token,
+                        item: {
+                            workoutId: Number(id),
+                            exerciseId: Number(we.exerciseId),
+                            sets: JSON.stringify(setsToSave),
+                        },
+                    });
+                }
+            }
             console.log("Save Workout Payload", { id, title, excercises: workoutExercises });
             alert("Workout saved!");
         }   catch (e) {
