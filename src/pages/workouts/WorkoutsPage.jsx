@@ -91,9 +91,12 @@ export default function WorkoutsPage() {
     <AppLayout title="Workouts">
       <div className="workoutsPage">
         <div className="workoutsHeader">
-          <button className="primaryBtn" onClick={handleStartNew}>
-            Start new workout
-          </button>
+
+            {!isLoading && visibleWorkouts.length > 0 && (
+                <button className="primaryBtn" onClick={handleStartNew}>
+                    Start new workout
+                </button>
+            )}
         </div>
 
         {error && <div className="errorbanner">{error}</div>}
