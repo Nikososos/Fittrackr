@@ -15,9 +15,9 @@ function normalizeExercise(apiItem) {
         name: apiItem.name ?? "Unnamed exercise",
         equipment: apiItem.equipment ?? "-",
         muscleGroups: [apiItem.targetMuscle].filter(Boolean),
-        instructions: apiItem.instructions ?? [
-            "No instructions available yet."
-        ],
+        instructions: apiItem.instruction
+            ? apiItem.instruction.split(". ").map(s => s.replace(/\.$/, "").trim()).filter(Boolean)
+            : ["No instructions available yet."],
     };
 }
 export default function ExercisesPage() {
