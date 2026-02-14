@@ -1,7 +1,8 @@
 import { noviFetch } from "./noviClient";
 
-export function getWorkouts({ token } = {}) {
-    return noviFetch("/api/workouts", {token});
+export function getWorkouts({ token, userId } = {}) {
+    const qs = userId ? `?userId=${encodeURIComponent(userId)}` : "";
+    return noviFetch(`/api/workouts${qs}`, { token });
 }
 
 export function createWorkout({ token, workout }) {
