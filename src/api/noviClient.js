@@ -6,7 +6,6 @@ const PROJECT_ID = import.meta.env.VITE_NOVI_PROJECT_ID;
 console.log("PROJECT_ID:", import.meta.env.VITE_NOVI_PROJECT_ID);
 console.log("BASE_URL:", import.meta.env.VITE_NOVI_BASE_URL);
 
-
 function buildHeaders(token, extraHeaders) {
     return {
         "Content-Type": "application/json",
@@ -17,11 +16,14 @@ function buildHeaders(token, extraHeaders) {
 }
 
 export async function noviFetch(path, { method = "GET", body, token, headers } = {}) {
+  console.log("NOVI FETCH:", `${BASE_URL}${path}`, { method, body });
+  
   const res = await fetch(`${BASE_URL}${path}`, {
     method,
     headers: buildHeaders(token, headers),
     body: body ? JSON.stringify(body) : undefined,
   });
+
 
   if (!res.ok) {
     const text = await res.text();

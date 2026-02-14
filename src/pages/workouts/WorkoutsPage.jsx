@@ -7,7 +7,8 @@ import "./WorkoutsPage.css";
 
 function normalizeWorkout(apiItem) {
     return {
-        id: String(apiItem.workout_id ?? apiItem.id),
+        id: String(apiItem.id),
+        workoutId: String(apiItem.workout_id),
         userId: apiItem.user_id ?? null,
         title: apiItem.title ?? "Untitled workout",
     };
@@ -22,8 +23,6 @@ export default function WorkoutsPage() {
     const [menuOpenForId, setMenuOpenForId] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState("");
-
-    const hasWorkouts = workouts.length > 0;
 
 
     // Load Workouts
@@ -70,11 +69,11 @@ export default function WorkoutsPage() {
             }, 0);
 
             const nextId = maxId + 1;
-            
+
             const payload = {
                 workout_id: nextId,
                 user_id: Number(userId),
-                title: "new workout",
+                title: "New excercise",
             };
 
             const created = await createWorkout({ token, workout: payload });
@@ -143,7 +142,7 @@ export default function WorkoutsPage() {
                                     </button>
 
                                     {menuOpenForId === w.id && (
-                                        <div clasName="menu">
+                                        <div className="menu">
                                             <button className="menuItem" onClick={() => handleEdit(w.id)}>
                                                 Edit
                                             </button>

@@ -1,11 +1,13 @@
 import { useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import AppLayout from "../../components/layout/AppLayout";
+import { useAuth } from "../../context/AuthContext";
+import { patchWorkout } from "../../api/workoutsApi";
 import ExerciseBrowserPanel from "../../components/exercises/ExerciseBrowserPanel";
 import ExerciseFilters from "../../components/exercises/ExerciseFilters";
 import ExerciseBrowserItem from "../../components/exercises/ExerciseBrowserItem";
 import "./WorkoutsBuilderPage.css";
-import ExercisesPage from "../exercises/ExercisesPage";
+
 
 // Dummy data used, connect to db later//
 
@@ -33,7 +35,8 @@ function createWorkoutExercise(exercise) {
 }
 
 export default function WorkoutsBuilderPage() {
-    const { id: workoutId } = useParams();
+    const { token } = useAuth();
+    const { id } = useParams();
 
     // To solve issues now use local workout state (fetch later through backend using workoutId)
     const [workoutName, setWorkoutName ] = useState ("Upperbody");
@@ -103,16 +106,22 @@ export default function WorkoutsBuilderPage() {
         );
     }
     
-    function handleSave() {
-        //PUT/PATCH to backend comes here
+    async function handleSave() {
+        try {
+            const title = workoutName.trim() || "New workout";
 
-        const payload = {
-            workoutId,
-            workoutName,
-            exercises: workoutExercises,
-        };
-        console.log("SAVE WORKOUT payload:", payload);
-        alert("Saved (demo). Check console for payload.");
+            await patchWorkout({
+                token,
+                id,
+                patch: { title }
+            });
+
+            console.log("Save Workout Payload", { id, title, excercises: workoutExercises });
+            alert("Workout saved!");
+        }   catch (e) {
+            console.error(e);
+            alert("Could not save workout.")
+        }
     }
 
     return (
