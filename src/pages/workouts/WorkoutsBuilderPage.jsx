@@ -107,7 +107,7 @@ export default function WorkoutsBuilderPage() {
   }
 
   load().catch(console.error);
-}, [token, id]);
+}, [token, id, exerciseLibrary]);
 
     const filteredLibrary = useMemo (() => {
         const q = search.toLowerCase().trim();
@@ -115,7 +115,7 @@ export default function WorkoutsBuilderPage() {
         return exerciseLibrary.filter((e) => {
             const matchesSearch = e.name.toLowerCase().includes(q);
             const matchesMuscle =
-                muscleGroup === "All" || e.muscleGroup === muscleGroup;
+                muscleGroup === "All" || e.targetMuscleGroup === muscleGroup;
             
             return matchesSearch && matchesMuscle;
         });
