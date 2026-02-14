@@ -5,6 +5,7 @@ import { useAuth } from "../../context/AuthContext";
 import { getExercises } from "../../api/exercisesApi";
 import { patchWorkout } from "../../api/workoutsApi";
 import { getWorkouts } from "../../api/workoutsApi";
+import { createWorkoutCompletion } from "../../api/workoutcompletionsApi";
 import { createWorkoutExercise, patchWorkoutExercise, getWorkoutExercises } from "../../api/workoutExercisesApi";
 import ExerciseBrowserPanel from "../../components/exercises/ExerciseBrowserPanel";
 import ExerciseFilters from "../../components/exercises/ExerciseFilters";
@@ -27,7 +28,7 @@ function createWorkoutExerciseState(exercise) {
 
 export default function WorkoutsBuilderPage() {
     const navigate = useNavigate();
-    const { token } = useAuth();
+    const { token, userId } = useAuth();
     const { id } = useParams();
 
     
@@ -122,6 +123,16 @@ export default function WorkoutsBuilderPage() {
         });
     }, [search, muscleGroup, exerciseLibrary]);
 
+    // Helper to format today as YYYY-MM-DD, later used in handleFinishWorkout
+    function todayISO() {
+        const d = new Date();
+        const yyyy = new Date();
+        const mm = String(d.getMonth() + 1).padStart(2, "0");
+        const dd = String(d.getDate()).padStart(2, "0");
+        return `${yyyy}-${mm}-${dd}`;
+    }
+
+    // Add excercise to workout
     function addExerciseToWorkout(exercise) {
         setWorkoutExercises((prev) => {
             const alreadyAdded = prev.some((we) => String(we.exerciseId) === String(exercise.id));
@@ -130,10 +141,12 @@ export default function WorkoutsBuilderPage() {
         });
     }
 
+    // remove excercise from workout
     function removeExercises(workoutExerciseId) {
         setWorkoutExercises((prev) => prev.filter((we) => we.id !== workoutExerciseId));
     }
 
+    // add set to excercise
     function addSet(workoutExerciseId) {
         setWorkoutExercises((prev) => 
             prev.map((we) => 
@@ -144,6 +157,7 @@ export default function WorkoutsBuilderPage() {
         );
     }
 
+    // remove set from excercise
     function removeSet(workoutExerciseId, setId) {
         setWorkoutExercises((prev) =>
             prev.map((we) => {
@@ -154,6 +168,7 @@ export default function WorkoutsBuilderPage() {
         );
     }
 
+    // update inputfield kg and sets
     function updateSetField(workoutExerciseID, setId, field, value) {
         let sanitizedValue = value;
 
@@ -179,6 +194,7 @@ export default function WorkoutsBuilderPage() {
         );
     }
     
+    // save workout with changes made
     async function handleSave() {
         try {
             const title = workoutName.trim() || "New workout";
@@ -230,6 +246,61 @@ export default function WorkoutsBuilderPage() {
         }
     }
 
+    async function handleFinishWorkout() {
+        try {
+            if (!workoutExercises.length) {
+                alert("You must add at least one exercise");
+                return;
+            }
+
+            // validate all sets
+            for (const we of workoutExercises) {
+                for (const s of we.sets) {
+                    const weight = Number(s.weight);
+                    const reps = Number(s.reps);
+
+                    if (!weight || !reps) {
+                        alert("All sets must have weight and reps greater than 0");
+                        return;
+                    }
+                }
+            }
+
+            // if validation passes look for the strongest lift
+            let bestValue = 0;
+            let bestExerciseId = null;
+
+            for (const we of workoutExercises) {
+                for (const s of we.sets) {
+                    const weight = Number(s.weight);
+
+                    if (weight > bestValue) {
+                        bestValue = weight;
+                        bestExerciseId = Number(we.exerciseId);
+                    }
+                }
+            }
+
+            const completion = {
+                userId: Number(userId),
+                workoutId: Number(id),
+                date: todayISO(),
+                bestExerciseId,
+                bestValue,
+            };
+
+            await createWorkoutCompletion( { token, completion });
+
+            alert("workout finished! Logged in progress.");
+            navigate("/progress");
+
+        }   catch (e) {
+            console.error(e);
+            alert("Could not finish workout.");
+        }
+    }
+
+    // navigate back to workout overview page without saving
     function handleBack() {
         navigate("/workouts");
     }
@@ -249,6 +320,9 @@ export default function WorkoutsBuilderPage() {
                     </div>
                     
                     <div className="wbHeaderActions">
+                        <button className="secondaryBtn" onClick={handleFinishWorkout}>
+                            Finish Workout
+                        </button>
                         <button className="secondaryBtn" onClick={handleBack}>
                             Back
                         </button>
