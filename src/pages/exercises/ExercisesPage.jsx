@@ -18,13 +18,14 @@ function normalizeExercise(apiItem) {
         instructions: apiItem.instruction
             ? apiItem.instruction.split(". ").map(s => s.replace(/\.$/, "").trim()).filter(Boolean)
             : ["No instructions available yet."],
+        imageUrl: apiItem.imageUrl ?? null,
     };
 }
 export default function ExercisesPage() {
     const { token } = useAuth();
 
     const [exercises, setExcercises] = useState([]);
-    const [selectedId, setSelectedID] = useState(null);
+    const [selectedId, setSelectedId] = useState(null);
 
     const [search, setSearch] = useState("");
     const [muscleGroup, setMuscleGroup] = useState("All");
@@ -48,7 +49,7 @@ export default function ExercisesPage() {
 
                 //set default selection to first item if nothing is selected yet
                 if (!selectedId && normalized.length > 0) {
-                    setSelectedID(normalized[0].id);
+                    setSelectedId(normalized[0].id);
                 }
             // error handling if nothing loads in
             } catch (e) {
@@ -84,6 +85,8 @@ export default function ExercisesPage() {
     const selectedExercise =
         exercises.find((e) => e.id === selectedId) || filteredExercises[0] || null;
 
+        console.log("Selected imageUrl:", selectedExercise?.imageUrl);
+
     return (
         <AppLayout title="Exercises">
             <div className="exercisesPage">
@@ -109,7 +112,17 @@ export default function ExercisesPage() {
                                 {selectedExercise.muscleGroups.join(", ")}
                             </div>
 
-                            <div className="imagePlaceholder">Exercise image</div>
+                            {selectedExercise.imageUrl ? (
+                                <img
+                                    className="exerciseImage"
+                                    alt={selectedExercise.name}
+                                    src={new URL(selectedExercise.imageUrl, import.meta.env.VITE_NOVI_BASE_URL).toString()}
+                                    onError={(e) => console.log("IMG ERROR:", e.currentTarget.src)}
+                                    onLoad={() => console.log("IMG LOADED")}
+                                />
+                            ) : (
+                                <div className="imagePlaceholder">Exercise image</div>
+                            )}
 
                             <div className="instruction">
                                 <h3>How to do:</h3>
@@ -140,7 +153,7 @@ export default function ExercisesPage() {
                                 key={ex.id}
                                 text={ex.name}
                                 right=">"
-                                onClick={() => setSelectedID(ex.id)}
+                                onClick={() => setSelectedId(ex.id)}
                             />
                         ))}
                     </div>
