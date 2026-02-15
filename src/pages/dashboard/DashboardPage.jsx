@@ -117,10 +117,6 @@ export default function DashboardPage() {
         <AppLayout title="Home">
             <div className="dashboardGrid">
 
-                <h2 className="welcomeMessage">
-                    Welcome
-                </h2>
-
                 <button 
                     type="button"
                     className="startWorkoutBtn"
@@ -136,6 +132,22 @@ export default function DashboardPage() {
                         <span className="statLabel">Date last Workout:</span>
                         <span className="statValue">
                             {isLoading? "Loading..." : formatLongDate(lastWorkoutISO)}
+                        </span>
+                    </div>
+
+                    <div className="statCard">
+                        <span className="statLabel">Total workouts this year:</span>
+                        <span className="statValue">
+                            {isLoading ? "..." : countThisYear}
+                        </span>
+                    </div>
+                </div>
+
+                <div className="statsRow">
+                    <div className="statCard">
+                        <span className="statLabel">Strongest lift:</span>
+                        <span className="statValue">
+                            {StrongestLift.label} ({StrongestLift.value})
                         </span>
                     </div>
 
