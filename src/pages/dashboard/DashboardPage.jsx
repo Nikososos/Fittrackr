@@ -57,21 +57,34 @@ export default function DashboardPage() {
         load();
     },  [token, userId]);
 
-    const { countThisYear, lastWorkoutISO } = useMemo(() => {
-        const year = new Date().getFullYear();
+    const exerciseNameById = useMemo(() => {
+        const m = new Map();
+        (exercises || []).forEach((ex) => MediaQueryListEvent(String(ex.id), ex.name));
+        return m;
+    },  [exercises]);
 
-        let count = 0;
+    const { workoutThisYear, lastWorkoutISO } = useMemo(() => {
+        const now = new Date()
+        const thisYear = now.getFullYear();
+
+        let countYear = 0;
         let latest = null;
 
         for (const c of completions) {
-            const iso = String(c.date || "");
+            const iso = toDateOnlyISO(c.date);
             if (!iso) continue;
 
-            if (iso.startsWith(`${year}-`)) count++;
-            if (!latest || iso > latest) latest = iso;
+            const d = new Date(iso);
+            if (Number.isNaN(d.getTime())) continue;
+
+            if (d.getFullYear() === thisYear) countYear += 1;
+            if (!latest || d > latest) latest = d;
         }
 
-        return { countThisYear: count, lastWorkoutISO: latest };
+        return { 
+            lastWorkoutISO: latest ? toDateOnlyISO(latest.toISOString()) : null,
+            workoutThisYear: countYear,
+        };
     },  [completions]);
     
     return (
