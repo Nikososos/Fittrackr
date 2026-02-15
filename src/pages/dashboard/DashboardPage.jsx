@@ -59,7 +59,7 @@ export default function DashboardPage() {
 
     const exerciseNameById = useMemo(() => {
         const m = new Map();
-        (exercises || []).forEach((ex) => MediaQueryListEvent(String(ex.id), ex.name));
+        (exercises || []).forEach((ex) => m.set(String(ex.id), ex.name));
         return m;
     },  [exercises]);
 
@@ -112,6 +112,35 @@ export default function DashboardPage() {
             value: `${Number(best.bestValue)} kg`,
         };
     },  [completions, exerciseNameById]);
+
+    // This month vs last month calculation
+    const monthComparison = useMemo (() => {
+        const now = new Date();
+        const thisMonthKey = yearMonthKey(now);
+
+        const prev = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+        const lastMonthKey = yearMonthKey(prev);
+
+        let thisMonth = 0;
+        let lastMonth = 0;
+
+        for (const c of completions) {
+            const iso = toDateOnlyISO(c.date);
+            if (!iso) continue;
+
+            const d = new Date(iso);
+            if (Number.isNaN(d.getTime())) continue;
+
+            const key = yearMonthKey(d);
+            if (key === thisMonthKey) thisMonth += 1;
+            if (key === lastMonthKey) lastMonth += 1;
+        }
+
+        const diff = thisMonth - lastMonth;
+        const diffLabel = diff === 0 ? "No change" : diff > 0 ? `+${diff}` : `${diff}`;
+
+        return { thisMonth, lastMonth, diffLabel };
+    },  [completions]);
     
     return (
         <AppLayout title="Home">
@@ -131,14 +160,14 @@ export default function DashboardPage() {
                     <div className="statCard">
                         <span className="statLabel">Date last Workout:</span>
                         <span className="statValue">
-                            {isLoading? "Loading..." : formatLongDate(lastWorkoutISO)}
+                            {formatPrettyDate(lastWorkoutISO)}
                         </span>
                     </div>
 
                     <div className="statCard">
                         <span className="statLabel">Total workouts this year:</span>
                         <span className="statValue">
-                            {isLoading ? "..." : countThisYear}
+                            {workoutsThisYear}
                         </span>
                     </div>
                 </div>
@@ -152,9 +181,9 @@ export default function DashboardPage() {
                     </div>
 
                     <div className="statCard">
-                        <span className="statLabel">Total workouts this year:</span>
+                        <span className="statLabel">This month vs last month</span>
                         <span className="statValue">
-                            {isLoading ? "..." : countThisYear}
+                            {monthComparison.thisMonth} vs {monthComparison.lastMonth} ({monthComparison.diffLabel})
                         </span>
                     </div>
                 </div>
