@@ -63,7 +63,7 @@ export default function DashboardPage() {
         return m;
     },  [exercises]);
 
-    const { workoutThisYear, lastWorkoutISO } = useMemo(() => {
+    const { lastWorkoutISO, workoutsThisYear } = useMemo(() => {
         const now = new Date()
         const thisYear = now.getFullYear();
 
@@ -83,9 +83,35 @@ export default function DashboardPage() {
 
         return { 
             lastWorkoutISO: latest ? toDateOnlyISO(latest.toISOString()) : null,
-            workoutThisYear: countYear,
+            workoutsThisYear: countYear,
         };
     },  [completions]);
+
+    // Strongest lift Highlight
+    const StrongestLift = useMemo(() => {
+        let best = null;
+
+        for (const c of completions) {
+            const value = Number(c.bestValue ?? 0);
+            if (!value) continue;
+
+            if (!best || value > Number(best.bestValue ?? 0)) {
+                best = c;
+            }
+        }
+
+        if (!best) return { label: "-", value: "-"};
+        
+        const exName =
+            best.bestExerciseId != null
+                ? exerciseNameById.get(String(best.bestExerciseId)) || `Exercise ${best.bestExerciseId}`
+                : "Exercise";
+        
+        return {
+            label: exName,
+            value: `${Number(best.bestValue)} kg`,
+        };
+    },  [completions, exerciseNameById]);
     
     return (
         <AppLayout title="Home">
