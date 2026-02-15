@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AppLayout from "../../components/layout/AppLayout";
 import { useAuth } from "../../context/AuthContext";
-import { createWorkout, deleteWorkout, getWorkouts } from "../../api/workoutsApi";
+import { deleteWorkout, getWorkouts } from "../../api/workoutsApi";
 import "./WorkoutsPage.css";
 
 function normalizeWorkout(apiItem) {

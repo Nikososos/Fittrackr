@@ -64,7 +64,7 @@ export default function DashboardPage() {
             <div className="dashboardGrid">
 
                 <h2 className="welcomeMessage">
-                    Welcome{displayName ? `, ${displayName}` : ""}
+                    Welcome
                 </h2>
 
                 <button 

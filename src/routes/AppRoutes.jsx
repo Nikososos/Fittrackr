@@ -42,6 +42,15 @@ export default function AppRoutes() {
                 } 
             />
 
+            <Route
+                path="/workouts/new"
+                element={
+                    <ProtectedRoute>
+                        <WorkoutsBuilderPage />
+                    </ProtectedRoute>
+                } 
+            />
+
             <Route 
                 path="/workouts/:id" 
                 element={
