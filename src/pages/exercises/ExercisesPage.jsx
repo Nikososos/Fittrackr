@@ -85,8 +85,6 @@ export default function ExercisesPage() {
     const selectedExercise =
         exercises.find((e) => e.id === selectedId) || filteredExercises[0] || null;
 
-        console.log("Selected imageUrl:", selectedExercise?.imageUrl);
-
     return (
         <AppLayout title="Exercises">
             <div className="exercisesPage">
