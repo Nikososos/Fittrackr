@@ -49,7 +49,7 @@ export default function LoginPage() {
             }
             //Token
             console.log("FOUND USER", me);
-            login(token, me.id);
+            login(token, me.id, me.displayName);
             console.log("Saved userId", localStorage.getItem("userId"));
 
             //Navigeer naar dashboard na login

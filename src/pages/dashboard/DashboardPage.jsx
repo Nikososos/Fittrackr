@@ -14,6 +14,7 @@ function formatLongDate(iso) {
 export default function DashboardPage() {
     const navigate = useNavigate();
     const { token, userId } = useAuth();
+    const { displayName } = useAuth();
 
     const [completions, setCompletions] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -61,6 +62,11 @@ export default function DashboardPage() {
     return (
         <AppLayout title="Home">
             <div className="dashboardGrid">
+
+                <h2 className="welcomeMessage">
+                    Welcome{displayName ? `, ${displayName}` : ""}
+                </h2>
+
                 <button 
                     type="button"
                     className="startWorkoutBtn"

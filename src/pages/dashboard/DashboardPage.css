@@ -4,6 +4,12 @@
     gap: 28px;
 }
 
+.welcomeMessage {
+    font-size: 26px;
+    font-weight: 700;
+    margin-bottom: 24px;
+}
+
 .startWorkoutBtn {
     align-self: center;
     background: #2563eb;

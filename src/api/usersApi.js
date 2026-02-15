@@ -4,10 +4,9 @@ export function getUsers({ token } = {}) {
     return noviFetch("/api/users", { token });
 }
 
-export function patchUser({ token, id, patch }) {
+export function deleteUser({ token, id, }) {
   return noviFetch(`/api/users/${id}`, {
-    method: "PATCH",
+    method: "DELETE",
     token,
-    body: patch,
   });
 }
