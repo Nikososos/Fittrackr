@@ -101,15 +101,6 @@ export default function LoginPage() {
                         <button className="btnPrimary" type="submit" disabled={isLoading}>
                             {isLoading ? "Logging in..." : "Login"}
                         </button>
-
-                        <button
-                            className="btnSecondary"
-                            type="button"
-                            onClick={() => navigate ("/register")}
-                            disabled={isLoading}
-                        >
-                            Register    
-                        </button>
                     </div>
                 </form>
             </div>
