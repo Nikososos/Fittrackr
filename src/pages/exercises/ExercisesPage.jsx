@@ -112,25 +112,29 @@ export default function ExercisesPage() {
                                 {selectedExercise.muscleGroups.join(", ")}
                             </div>
 
-                            {selectedExercise.imageUrl ? (
-                                <img
-                                    className="exerciseImage"
-                                    alt={selectedExercise.name}
-                                    src={new URL(selectedExercise.imageUrl, import.meta.env.VITE_NOVI_BASE_URL).toString()}
-                                    onError={(e) => console.log("IMG ERROR:", e.currentTarget.src)}
-                                    onLoad={() => console.log("IMG LOADED")}
-                                />
-                            ) : (
-                                <div className="imagePlaceholder">Exercise image</div>
-                            )}
+                            <div className="exerciseMediaBlock">
+                                <div className="exerciseImageWrapper">
+                                    {selectedExercise.imageUrl ? (
+                                        <img
+                                            className="exerciseImage"
+                                            alt={selectedExercise.name}
+                                            src={new URL(selectedExercise.imageUrl, import.meta.env.VITE_NOVI_BASE_URL).toString()}
+                                            onError={(e) => console.log("IMG ERROR:", e.currentTarget.src)}
+                                            onLoad={() => console.log("IMG LOADED")}
+                                        />
+                                    ) : (
+                                        <div className="imagePlaceholder">Exercise image</div>
+                                    )}
+                                </div>
 
-                            <div className="instruction">
-                                <h3>How to do:</h3>
-                                <ol>
-                                    {selectedExercise.instructions.map((step) => (
-                                        <li key={step}>{step}</li>
-                                    ))}
-                                </ol>
+                                <div className="instruction">
+                                    <h3>How to do:</h3>
+                                    <ol>
+                                        {selectedExercise.instructions.map((step) => (
+                                            <li key={step}>{step}</li>
+                                        ))}
+                                    </ol>
+                                </div>
                             </div>
                         </>
                        )
