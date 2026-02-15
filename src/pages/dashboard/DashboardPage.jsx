@@ -2,22 +2,32 @@ import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AppLayout from "../../components/layout/AppLayout";
 import { useAuth } from "../../context/AuthContext";
+import { getExercises } from "../../api/exercisesApi";
 import { getWorkoutCompletions } from "../../api/workoutcompletionsApi";
 import "./DashboardPage.css";
 
-function formatLongDate(iso) {
-    if (!iso) return "-";
-    const d = new Date(`${iso}T00:00:00`);
+function toDateOnlyISO(value) {
+    if (!value) return null;
+    return String(value).slice(0, 10);
+}
+
+function formatPrettyDate(isoDate) {
+    if (!isoDate) return "-";
+    const d = new Date(isoDate);
+    if (Number.isNaN(d.getTime())) return isoDate;
     return d.toLocaleDateString("en", { day: "2-digit", month: "long", year: "numeric" });
+}
+
+function yearMonthKey(date) {
+    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
 }
 
 export default function DashboardPage() {
     const navigate = useNavigate();
     const { token, userId } = useAuth();
-    const { displayName } = useAuth();
 
     const [completions, setCompletions] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
+    const [exercises, setExercises] = useState([]);
     const [error, setError] = useState("");
 
     useEffect(() => {
@@ -26,16 +36,21 @@ export default function DashboardPage() {
         async function load() {
             try {
                 setError("");
-                setIsLoading(true);
+                
+                const [cRes, eRes] = await Promise.all([
+                    getWorkoutCompletions({ token, userId }),
+                    getExercises({ token })
+                ]);
 
-                const res = await getWorkoutCompletions({ token, userId });
-                const list = Array.isArray(res) ?res : res?.data || [];
-                setCompletions(list);
+                const cList = Array.isArray(cRes) ? cRes : cRes?.data || [];
+                const eList = Array.isArray(eRes) ? eRes : eRes?.data || [];
+
+                
+                setCompletions(cList);
+                setExercises(eList);
             }   catch(e) {
                 console.error(e)
                 setError("Could not load dashboard stats.")
-            }   finally {
-                setIsLoading(false);
             }
         }
 
