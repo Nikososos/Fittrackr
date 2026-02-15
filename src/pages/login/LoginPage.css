@@ -1,11 +1,24 @@
 .loginPage {
     min-height: 100vh;
-    display: grid;
-    place-items: center;
-    padding: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background-image: url("../../assets/LoginImg.jpeg");
+    background-size: cover;          
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.loginPage::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.35);
 }
 
 .loginCard {
+    position: relative;
     width: 520px;
     max-width: 92vw;
     background: #8e8e8e;
