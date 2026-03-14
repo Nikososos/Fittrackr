@@ -112,7 +112,7 @@ export default function SettingsPage() {
             {isAdmin && (
               <div className="settingsCard">
                 <div className="settingsRow">
-                  <span className="settingsLabel">Logged in as:</span>
+                  <span className="settingsLabel">Email</span>
                   <span className="settingsValue">{me?.email || "-"}</span>
                 </div>
 
