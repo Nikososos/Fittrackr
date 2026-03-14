@@ -196,7 +196,16 @@ export default function WorkoutsBuilderPage() {
     //checks if workouts already exist
     async function ensureWorkoutExists() {
         //If editing existing workout return id
-        if (id !== "new") return Number(id);
+        if (id) {
+            const numericId = Number(id);
+            
+            if (!Number.isInteger(numericId)) {
+                throw new Error(`Invalid Route id: ${id}`);
+            }
+            
+            return Number(id);
+
+        }
 
         const title = workoutName.trim() || "New Workout";
 
@@ -207,6 +216,15 @@ export default function WorkoutsBuilderPage() {
                 title,
             },
         });
+
+        console.log("createworkout response: ", created);
+
+        const createdId = created?.id ?? created?.data?.id ?? created?.workout?.id;
+
+        if (!Number.isInteger(Number(createdId))) {
+            console.error("Unexpected createworkout response", created);
+            throw new Error("createWorkout didn ot return a valid workout id")
+        }
 
         // Move URL from /workouts/new > /workouts/realId so refresh works
         navigate(`/workouts/${created.id}`, { replace: true });
@@ -219,19 +237,22 @@ export default function WorkoutsBuilderPage() {
         console.log("HANDLE SAVE CALLED");
         try {
             const title = workoutName.trim() || "New workout";
-
+            const isExistingWorkout = Boolean(id);
             const workoutId = await ensureWorkoutExists();
 
             // Only patch if it already existed; if it was just created, title is already set
-            if (id !== "new") {
+            if (isExistingWorkout) {
                 await patchWorkout({ token, id: workoutId, patch: { title }});
             }
 
             const allWE = await getWorkoutExercises({ token });
             const existingList = Array.isArray(allWE) ? allWE : allWE?.data || [];
-            const existing = existingList.filter((we) => String(we.workoutId) === String(workoutId));
+            const existing = existingList.filter(
+                (we) => String(we.workoutId) === String(workoutId));
             // Delete backend Rows that user removed in the UI
-            const uiExerciseIds = new Set(workoutExercises.map((we) => String(we.exerciseId)));
+            const uiExerciseIds = new Set(
+                workoutExercises.map((we) => String(we.exerciseId))
+            );
 
             const toDelete = existing.filter(
                 (row) => !uiExerciseIds.has(String(row.exerciseId))
