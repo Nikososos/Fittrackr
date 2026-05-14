@@ -193,7 +193,18 @@ export default function ExercisesPage() {
                                     </div>
                                 )}
 
-                                
+                                {addError && (
+                                    <div className="addErrorBanner">
+                                        <span>{addError}</span>
+                                        <button
+                                            className="addBannerClose"
+                                            onClick={() => setAddError("")}
+                                            aria-label="Dismiss"
+                                        >
+                                            X
+                                        </button>
+                                    </div>
+                                )}
                             </div>
                         </>
                        )
