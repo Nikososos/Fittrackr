@@ -35,6 +35,7 @@ export default function ExercisesPage() {
 
     const [exercises, setExcercises] = useState([]);
     const [selectedId, setSelectedId] = useState(null);
+    const [isAdmin, setIsAdmin] = useState(false);
 
     const [search, setSearch] = useState("");
     const [muscleGroup, setMuscleGroup] = useState("All");
@@ -82,6 +83,23 @@ export default function ExercisesPage() {
 
         load();
     }, [token]);
+
+    // Check if current user is admin
+    useEffect (() => {
+        async function checkAdmin() {
+            try {
+                const { getUsers } = await import("../../api/usersApi");
+                const res = await getUsers({ token });
+                const list = Array.isArray(res) ? res : res?.data || [];
+                const me = list.find((u) => String(u.id) === String(userId));
+                setIsAdmin(Boolean(me?.roles?.includes("admin")));
+            } catch (e) {
+                console.error("Could not check admin status", e);
+            }
+        }
+
+        if (token && userId) checkAdmin();
+    }, [token, userId]);
 
     // Load workouts for dropdown
     useEffect(() => {
