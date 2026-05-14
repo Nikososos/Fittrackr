@@ -49,9 +49,7 @@ export default function ExercisesPage() {
                 setIsLoading(true);
 
                 const data = await getExercises({token});
-                
                 const list = Array.isArray(data) ? data : data?.data || [];
-
                 const normalized = list.map(normalizeExercise);
                 setExcercises(normalized);
 
@@ -70,6 +68,8 @@ export default function ExercisesPage() {
 
         load();
     }, [token]);
+
+    // Load workouts for dropdown
 
     const muscleOptions = useMemo (() => {
         const set = new Set(DEFAULT_MUSCLE_GROUPS);
@@ -140,6 +140,23 @@ export default function ExercisesPage() {
                                             <li key={step}>{step}</li>
                                         ))}
                                     </ol>
+                                </div>
+                            </div>
+
+                            {/* add to workout */}
+                            <div className="addToWorkoutWrapper">
+                                <div className="addToWorkoutRow">
+                                    <button
+                                        className="primaryBtn"
+                                        type="button"
+                                        onClick={() => {
+                                            setAddSucces("")
+                                            setAddError("");
+                                            setShowWorkoutDropdown((prev) => !prev);
+                                        }}
+                                    >
+                                        Add to workout
+                                    </button>
                                 </div>
                             </div>
                         </>
