@@ -312,7 +312,7 @@ export default function WorkoutsBuilderPage() {
     async function handleFinishWorkout() {
         try {
             if (!workoutExercises.length) {
-                alert("You must add at least one exercise");
+                setSaveError("You need to add at least one exercise before finishing the workout.");
                 return;
             }
 
