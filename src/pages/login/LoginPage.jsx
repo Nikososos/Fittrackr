@@ -98,8 +98,19 @@ export default function LoginPage() {
                     {error && <div className="errorbanner">{error}</div>}
 
                     <div className="buttonRow">
-                        <button className="btnPrimary" type="submit" disabled={isLoading}>
+                        <button 
+                            className="btnPrimary" 
+                            type="submit" 
+                            disabled={isLoading}
+                        >
                             {isLoading ? "Logging in..." : "Login"}
+                        </button>
+                        <button
+                            className="btnSecondary"
+                            type="button"
+                            onClick={() => navigate("/register")}
+                        >
+                            Register
                         </button>
                     </div>
                 </form>
