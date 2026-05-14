@@ -1,1 +1,36 @@
 @import "../login/LoginPage.css";
+
+.registerInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.registerInfoText {
+    color: #fff;
+    font-size: 15px;
+    line-height: 1.5;
+    text-align: center;
+}
+
+.demoAccounts {
+    background: rgba(0, 0, 0, 0.25);
+    border-radius: 10px;
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.demoLabel {
+    color: #d1d5db;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 2px;
+}
+
+.demoAccount {
+    color: #93c5fd;
+    font-size: 13px;
+    font-family: monospace;
+}
