@@ -4,10 +4,19 @@ import ExerciseBrowserPanel from "../../components/exercises/ExerciseBrowserPane
 import ExerciseFilters from "../../components/exercises/ExerciseFilters";
 import ExerciseBrowserItem from "../../components/exercises/ExerciseBrowserItem";
 import { useAuth } from "../../context/AuthContext";
-import { getExercises } from "../../api/exercisesApi";
+import { createExercise, deleteExercise, getExercises } from "../../api/exercisesApi";
+import { getWorkouts } from "../../api/workoutsApi";
+import { getWorkoutExercises, createWorkoutExercise } from "../../api/workoutExercisesApi";
 import "./ExercisesPage.css";
 
 const DEFAULT_MUSCLE_GROUPS = ["All", "Chest", "Back", "Shoulders", "Biceps", "Triceps"];
+
+const emptyForm = {
+    name: "",
+    equipment: "",
+    targetMuscle: "",
+    instruction: "",
+};
 
 function normalizeExercise(apiItem) {
     return {
@@ -22,16 +31,35 @@ function normalizeExercise(apiItem) {
     };
 }
 export default function ExercisesPage() {
-    const { token } = useAuth();
+    const { token, userId } = useAuth();
 
-    const [exercises, setExcercises] = useState([]);
+    const [exercises, setExercises] = useState([]);
     const [selectedId, setSelectedId] = useState(null);
+    const [isAdmin, setIsAdmin] = useState(false);
 
     const [search, setSearch] = useState("");
     const [muscleGroup, setMuscleGroup] = useState("All");
 
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState("");
+
+    // Add exercise form state (admin only)
+    const [showAddForm, setShowAddForm] = useState(false);
+    const [form, setForm] = useState(emptyForm);
+    const [formError, setFormError] = useState("");
+    const [formSucces, setFormSucces] = useState("");
+    const [isSaving, setIsSaving] = useState(false);
+
+    // Delete State (Admin Only)
+    const [isDeleting, setIsDeleting] = useState(false);
+    const [deleteError, setDeleteError] = useState("");
+     const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+    // workout dropdown state
+    const [workouts, setWorkouts] = useState([]);
+    const [showWorkoutDropdown, setShowWorkoutDropdown] = useState(false);
+    const [addSucces, setAddSucces] = useState("");
+    const [addError, setAddError] = useState("");
 
     // Load excercises from backend
     useEffect (() => {
@@ -41,11 +69,9 @@ export default function ExercisesPage() {
                 setIsLoading(true);
 
                 const data = await getExercises({token});
-                
                 const list = Array.isArray(data) ? data : data?.data || [];
-
                 const normalized = list.map(normalizeExercise);
-                setExcercises(normalized);
+                setExercises(normalized);
 
                 //set default selection to first item if nothing is selected yet
                 if (!selectedId && normalized.length > 0) {
@@ -63,13 +89,165 @@ export default function ExercisesPage() {
         load();
     }, [token]);
 
+    // Check if current user is admin
+    useEffect (() => {
+        async function checkAdmin() {
+            try {
+                const { getUsers } = await import("../../api/usersApi");
+                const res = await getUsers({ token });
+                const list = Array.isArray(res) ? res : res?.data || [];
+                const me = list.find((u) => String(u.id) === String(userId));
+                setIsAdmin(Boolean(me?.roles?.includes("admin")));
+            } catch (e) {
+                console.error("Could not check admin status", e);
+            }
+        }
+
+        if (token && userId) checkAdmin();
+    }, [token, userId]);
+
+    // Load workouts for dropdown
+    useEffect(() => {
+        async function loadWorkouts() {
+            try {
+                const data = await getWorkouts( {token });
+                const list = Array.isArray(data) ? data : data?.data || [];
+                setWorkouts(list);
+            } catch (e) {
+                console.error("Could not load workouts", e);
+            }
+        }
+
+        loadWorkouts();
+    },  [token]);
+
+    // Close dropwdown when selected exercise changes
+    useEffect(() => {
+        setShowWorkoutDropdown(false);
+        setAddSucces("");
+        setAddError("");
+    },  [selectedId]);
+
+    // Handle add exercise form submit (admin only)
+
+    async function handleCreateExercise(e) {
+        e.preventDefault();
+        setFormError("");
+        setFormSucces("");
+
+        const name = form.name.trim();
+        const equipment = form.equipment.trim();
+        const targetMuscle = form.targetMuscle.trim();
+        const instruction = form.instruction.trim();
+
+        if (!name || !equipment || !targetMuscle || !instruction) {
+            setFormError("Please fill in all fields");
+            return;
+        }
+
+        try {
+            setIsSaving(true);
+
+            const created = await createExercise({
+                token,
+                exercise: { name, equipment, targetMuscle, instruction },
+            });
+        
+            // Add new exercise to the list and select it
+            const normalized = normalizeExercise(created);
+            setExercises((prev) => [...prev, normalized]);
+            setSelectedId(normalized.id);
+
+            setForm(emptyForm);
+            setFormSucces(`"${name}" has been added succesfully`);
+            setShowAddForm(false);
+        } catch (e) {
+            console.error(e);
+            setFormError("Could not create exercise. Please try again.");
+        } finally {
+            setIsSaving(false);
+        }
+    }
+
+    // Handle delete exercise (admin Only)
+    function handleDeleteExercise() {
+        setShowDeleteModal(true);
+    }
+
+    async function confirmDeleteExercise() {
+        setShowDeleteModal(false);
+        try {
+            setIsDeleting(true);
+            setDeleteError("");
+
+            await deleteExercise({ token, id: selectedExercise.id });
+
+            const remaining = exercises.filter((e) => e.id !== selectedExercise.id);
+            setExercises(remaining);
+            setSelectedId(remaining.length > 0 ? remaining[0].id : null);
+        } catch (e) {
+            console.error(e);
+            setDeleteError("Could not delete exercise. Please try again")
+        } finally {
+            setIsDeleting(false);
+        }
+        
+    }
+    function handleFormChange(field, value) {
+        setFormError("");
+        setForm((prev) => ({ ...prev, [field]: value}));
+    }
+
+    async function handleAddToWorkout(workout) {
+        setAddSucces("");
+        setAddError("");
+        setShowWorkoutDropdown(false)
+
+        try {
+            // Check if exercise is already in this workout
+            const allWE = await getWorkoutExercises({ token });
+            const weList = Array.isArray(allWE) ? allWE : allWE?.data || [];
+            const alreadyAdded = weList.some(
+                (we) =>
+                    Number(we.workoutId) === Number(workout.id) &&
+                    Number(we.exerciseId) === Number(selectedExercise.id)
+            );
+
+            if (alreadyAdded) {
+                setAddError(`"${selectedExercise.name}" is already in "${workout.title}".`);
+                return;
+            }
+
+            // Add exercise with 3 default empty sets
+            const defaultSets = JSON.stringify([
+                { weight: 0, reps: 0 },
+                { weight: 0, reps: 0 },
+                { weight: 0, reps: 0 },
+            ]);
+
+                await createWorkoutExercise({
+                token,
+                item: {
+                    workoutId: Number(workout.id),
+                    exerciseId: Number(selectedExercise.id),
+                    sets: defaultSets,
+                },
+            });
+
+            setAddSucces(`"${selectedExercise.name}" added to "${workout.title}"!`);
+        } catch (e) {
+            console.error(e);
+            setAddError("Could not add exercise to workout.");
+        }
+    }
+
     const muscleOptions = useMemo (() => {
         const set = new Set(DEFAULT_MUSCLE_GROUPS);
         exercises.forEach((ex) => ex.muscleGroups.forEach((m) => set.add(m)));
         return Array.from(set);
     }, [exercises]);
 
-
+    //* filtering excercises on the searchbar right panel
     const filteredExercises = useMemo(() => {
         return exercises.filter((ex) => {
             const matchesSearch =
@@ -90,6 +268,96 @@ export default function ExercisesPage() {
             <div className="exercisesPage">
                 <div className="exDetail">
 
+                    {/* Admin: add excercise button + form */}
+                    {isAdmin && (
+                        <div className="adminExerciseSection">
+                            <button
+                                className="primaryBtn adminAddBtn"
+                                type="button"
+                                onClick={() => {
+                                    setShowAddForm((prev) => !prev);
+                                    setFormError("");
+                                    setFormSucces("");
+                                    setForm(emptyForm);
+                                }}
+                            >
+                                {showAddForm ? "Cancel" : "+ Add new exercise"}
+                            </button>
+
+                            {formSucces && (
+                                <div className="addSuccesBanner">
+                                    <span>{formSucces}</span>
+                                    <button
+                                        className="addBannerClose"
+                                        onClick={() => setFormSucces("")}
+                                        aria-label="Dismiss"
+                                    >
+                                        X
+                                    </button>
+                                </div>
+                            )}
+
+                            {showAddForm && (
+                                <form className="AddExerciseForm" onSubmit={handleCreateExercise}>
+                                    <h3 className="addExerciseTitle">New exercise</h3>
+
+                                    <label className="formLabel" htmlFor="exName">Name</label>
+                                    <input
+                                        id="exName"
+                                        className="formInput"
+                                        type="text"
+                                        placeholder="e.g. Bench Press"
+                                        value={form.name}
+                                        onChange={(e) => handleFormChange("name", e.target.value)}
+                                    />
+
+                                    <label className="formLabel" htmlFor="exEquipment">Equipment</label>
+                                    <input
+                                        id="exEquipment"
+                                        className="formInput"
+                                        type="text"
+                                        placeholder="e.g. Barbell"
+                                        value={form.equipment}
+                                        onChange={(e) => handleFormChange("equipment", e.target.value)}
+                                    />
+
+                                    <label className="formLabel" htmlFor="exMuscle">Muscle group</label>
+                                    <input
+                                        id="exMuscle"
+                                        className="formInput"
+                                        type="text"
+                                        placeholder="e.g. Chest"
+                                        value={form.targetMuscle}
+                                        onChange={(e) => handleFormChange("targetMuscle", e.target.value)}
+                                    />
+
+                                    <label className="formLabel" htmlFor="exInstruction">Insturctions</label>
+                                    <textarea
+                                        id="exInstructions"
+                                        className="formInput formTextarea"
+                                        placeholder="Describe the steps to perform this exercise."
+                                        value={form.instruction}
+                                        onChange={(e) => handleFormChange("instruction", e.target.value)}
+                                    />
+
+                                    {formError && (
+                                        <div className="addErrorBanner">
+                                            <span>{formError}</span>
+                                        </div>
+                                    )}
+
+                                    <button
+                                        className="primaryBtn"
+                                        type="submit"
+                                        disabled={isSaving}
+                                    >
+                                        {isSaving ? "Saving..." : "Save exercise"}
+                                    </button>
+                                </form>
+                            )}
+                        </div>
+                    )}
+
                     {isLoading && <div>Loading exercises...</div>}
                     {error && <div className="errorbanner">{error}</div>}
                     
@@ -100,7 +368,32 @@ export default function ExercisesPage() {
                        !error &&
                        selectedExercise && (             
                         <>
-                            <h2 className="exerciseTitle">{selectedExercise.name}</h2>
+                            <div>
+                                <h2 className="exerciseTitle">{selectedExercise.name}</h2>
+                                {isAdmin && (
+                                    <button
+                                        className="deleteExerciseBtn"
+                                        type="button"
+                                        onClick={handleDeleteExercise}
+                                        disabled={isDeleting}
+                                    >
+                                        {isDeleting ? "Deleting..." : "Delete exercise"}
+                                    </button>
+                                )}
+                            </div>
+
+                            {deleteError && (
+                                <div className="addErrorBanner">
+                                    <span>{deleteError}</span>
+                                    <button
+                                        className="addBannerClose"
+                                        onClick={() => setDeleteError("")}
+                                        aria-label="Dismiss"
+                                    >
+                                        X
+                                    </button>
+                                </div>
+                            )}
 
                             <div className="meta">
                                 <strong>Equipment:</strong> {selectedExercise.equipment}
@@ -134,6 +427,70 @@ export default function ExercisesPage() {
                                     </ol>
                                 </div>
                             </div>
+
+                            {/* add to workout */}
+                            <div className="addToWorkoutWrapper">
+                                <div className="addToWorkoutRow">
+                                    <button
+                                        className="primaryBtn"
+                                        type="button"
+                                        onClick={() => {
+                                            setAddSucces("")
+                                            setAddError("");
+                                            setShowWorkoutDropdown((prev) => !prev);
+                                        }}
+                                    >
+                                        Add to workout
+                                    </button>
+
+                                    {showWorkoutDropdown && (
+                                        <div className="workoutDropdown">
+                                            {workouts.length === 0 ? (
+                                                <div className="workoutDropdownEmpty">
+                                                    No workouts found. Create one first.
+                                                </div>
+                                            ) : (
+                                                workouts.map((w) => (
+                                                    <button
+                                                        key={w.id}
+                                                        className="workoutDropdownItem"
+                                                        type="button"
+                                                        onClick={() => handleAddToWorkout(w)}
+                                                    >
+                                                        {w.title}
+                                                    </button>
+                                                ))
+                                            )}
+                                        </div>
+                                    )}
+                                </div>
+
+                                {addSucces && (
+                                    <div className="addSuccesBanner">
+                                        <span>{addSucces}</span>
+                                        <button
+                                            className="addBannerClose"
+                                            onClick={() => setAddSucces("")}
+                                            aria-label="Dismiss"
+                                        >
+                                            X
+                                        </button>
+                                    </div>
+                                )}
+
+                                {addError && (
+                                    <div className="addErrorBanner">
+                                        <span>{addError}</span>
+                                        <button
+                                            className="addBannerClose"
+                                            onClick={() => setAddError("")}
+                                            aria-label="Dismiss"
+                                        >
+                                            X
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
                         </>
                        )
                     )}
@@ -161,6 +518,34 @@ export default function ExercisesPage() {
                     </div>
                 </ExerciseBrowserPanel>
             </div>
+
+            {/* Delete confirmation modal */}
+            {showDeleteModal && (
+                <div className="modalOverlay">
+                    <div className="modalCard">
+                        <h3 className="modalTitle">Delete exercise</h3>
+                        <p className="modalText">
+                            Are you sure you want to delete <strong>"{selectedExercise?.name}"</strong>? This cannot be undone.
+                        </p>
+                        <div className="modalActions">
+                            <button
+                                className="modalCancelBtn"
+                                type="button"
+                                onClick={() => setShowDeleteModal(false)}
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                className="modalDeleteBtn"
+                                type="button"
+                                onClick={confirmDeleteExercise}
+                            >
+                                Delete
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </AppLayout>
     );
 }

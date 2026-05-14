@@ -45,10 +45,14 @@ export default function DashboardPage() {
                 const cList = Array.isArray(cRes) ? cRes : cRes?.data || [];
                 const eList = Array.isArray(eRes) ? eRes : eRes?.data || [];
 
-                
-                setCompletions(cList);
+                // Filter completions to only show current user's data
+                const myCompletions = cList.filter(
+                    (c) => String(c.userId) === String(userId)
+                );
+
+                setCompletions(myCompletions);
                 setExercises(eList);
-            }   catch(e) {
+            }  catch(e) {
                 console.error(e)
                 setError("Could not load dashboard stats.")
             }
