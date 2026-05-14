@@ -1,5 +1,6 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import LoginPage from "../pages/login/LoginPage";
+import RegisterPage from "../pages/registration/RegisterPage";
 import DashboardPage from "../pages/dashboard/DashboardPage";
 import ExercisesPage from "../pages/exercises/ExercisesPage";
 import WorkoutsPage from "../pages/workouts/WorkoutsPage";
@@ -13,6 +14,7 @@ export default function AppRoutes() {
         <Routes>
             {/* Public Route */}
             <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
 
             {/* Protected Routes */}
             <Route 

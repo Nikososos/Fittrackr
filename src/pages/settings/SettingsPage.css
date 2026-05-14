@@ -28,7 +28,7 @@
 
 .adminSection {
   margin-top: 10px;
-  background: rgba(255,255,255,0.08);
+  background: #8e8e8e;
   padding: 16px;
   border-radius: 12px;
 }
@@ -38,7 +38,7 @@
 }
 
 .adminSearch {
-  width: 100%;
+  width: 95%;
   height: 40px;
   border-radius: 10px;
   border: 1px solid #d1d5db;
