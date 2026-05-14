@@ -33,8 +33,8 @@ export default function WorkoutsBuilderPage() {
     
     const [workoutName, setWorkoutName ] = useState ("");
     const [workoutExercises, setWorkoutExercises] = useState([]);
-
     const [exerciseLibrary, setExerciseLibrary] = useState([]);
+    const [saveError, setSaveError] = useState("");
 
     const muscleGroupOptions = useMemo(() => {
         const unique = Array.from(
@@ -92,8 +92,8 @@ export default function WorkoutsBuilderPage() {
         const exMeta = exerciseLibrary.find((e) => String(e.id) === String(we.exerciseId));
 
         return {
-            id: crypto.randomUUID(), // IMPORTANT: record id for PATCH/DELETE
-            workoutExerciseId: we.workoutExerciseId, // optional
+            id: crypto.randomUUID(),
+            workoutExerciseId: we.workoutExerciseId,
             exerciseId: Number(we.exerciseId),
             name: exMeta?.name || `Exercise ${we.exerciseId}`,
             sets: parsedSets.map((s) => ({
@@ -133,6 +133,7 @@ export default function WorkoutsBuilderPage() {
 
     // Add excercise to workout
     function addExerciseToWorkout(exercise) {
+        setSaveError("");
         setWorkoutExercises((prev) => {
             const alreadyAdded = prev.some((we) => String(we.exerciseId) === String(exercise.id));
             if (alreadyAdded) return prev; // avoid duplicates
@@ -223,7 +224,7 @@ export default function WorkoutsBuilderPage() {
 
         if (!Number.isInteger(Number(createdId))) {
             console.error("Unexpected createworkout response", created);
-            throw new Error("createWorkout didn ot return a valid workout id")
+            throw new Error("createWorkout did not return a valid workout id")
         }
 
         // Move URL from /workouts/new > /workouts/realId so refresh works
@@ -235,6 +236,15 @@ export default function WorkoutsBuilderPage() {
     // save workout with changes made
     async function handleSave() {
         console.log("HANDLE SAVE CALLED");
+
+        // Validate at least one exercise required
+        if (workoutExercises.length === 0) {
+            setSaveError("You need to add at least one exercise before saving");
+            return;
+        }
+
+        setSaveError("")
+
         try {
             const title = workoutName.trim() || "New workout";
             const isExistingWorkout = Boolean(id);
@@ -386,6 +396,19 @@ export default function WorkoutsBuilderPage() {
                         </button>
                     </div>
                 </div>
+
+                {saveError && (
+                    <div className="saveErrorBanner">
+                        <span>{saveError}</span>
+                        <button
+                            className="saveErrorClose"
+                            onClick={() => setSaveError("")}
+                            aria-label="Dismiss"
+                        >
+                            X
+                        </button>
+                    </div>
+                )}
 
                 <div className="wbGrid">
                     {/* LEFT: workout editor */}
