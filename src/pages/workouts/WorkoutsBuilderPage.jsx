@@ -35,6 +35,7 @@ export default function WorkoutsBuilderPage() {
     const [workoutExercises, setWorkoutExercises] = useState([]);
     const [exerciseLibrary, setExerciseLibrary] = useState([]);
     const [saveError, setSaveError] = useState("");
+    const [saveSucces, setSaveSucces] = useState("");
 
     const muscleGroupOptions = useMemo(() => {
         const unique = Array.from(
@@ -235,7 +236,9 @@ export default function WorkoutsBuilderPage() {
     
     // save workout with changes made
     async function handleSave() {
-        console.log("HANDLE SAVE CALLED");
+
+        setSaveError("");
+        setSaveSucces("");
 
         // Validate at least one exercise required
         if (workoutExercises.length === 0) {
@@ -243,10 +246,26 @@ export default function WorkoutsBuilderPage() {
             return;
         }
 
-        setSaveError("")
+        // Validate no duplicate workout name
+        const titleToCheck = workoutName.trim() || "New Workout";
+        try {
+            const allWorkouts = await getWorkouts({ token })
+            const workoutList = Array.isArray(allWorkouts) ? allWorkouts : allWorkouts?.data || [];
+            const duplicate = workoutList.find(
+                (w) =>
+                    w.title.trim().toLowerCase() === titleToCheck.toLowerCase() &&
+                    String(w.id) !== String(id)
+            );
+            if (duplicate) {
+                setSaveError(`A workout named "${titleToCheck}" already exists. Please choose a different name`);
+                return
+            }
+        } catch (e) {
+            console.error("Could not check for duplicate workouts names", e);
+        }
 
         try {
-            const title = workoutName.trim() || "New workout";
+            const title = titleToCheck;
             const isExistingWorkout = Boolean(id);
             const workoutId = await ensureWorkoutExists();
 
@@ -302,14 +321,17 @@ export default function WorkoutsBuilderPage() {
                 }
             }
             console.log("Save Workout Payload", { id, title, excercises: workoutExercises });
-            alert("Workout saved!");
-        }   catch (e) {
+            setSaveSucces(`Workout "${title}" saved succesfully!`);
+        }  catch (e) {
             console.error(e);
-            alert("Could not save workout.")
+            setSaveError("Could not save workout.")
         }
     }
 
     async function handleFinishWorkout() {
+        setSaveError("");
+        setSaveSucces("");
+
         try {
             if (!workoutExercises.length) {
                 setSaveError("You need to add at least one exercise before finishing the workout.");
@@ -325,7 +347,7 @@ export default function WorkoutsBuilderPage() {
                     const reps = Number(s.reps);
 
                     if (!weight || !reps) {
-                        alert("All sets must have weight and reps greater than 0");
+                        setSaveError("All sets must have weight and reps greater than 0");
                         return;
                     }
                 }
@@ -356,12 +378,12 @@ export default function WorkoutsBuilderPage() {
 
             await createWorkoutCompletion( { token, completion });
 
-            alert("workout finished! Logged in progress.");
-            navigate("/progress");
+            setSaveSucces("workout finished! Logged in progress.");
+            setTimeout(() => navigate("/progress"), 1500);
 
-        }   catch (e) {
+        }  catch (e) {
             console.error(e);
-            alert("Could not finish workout.");
+            setSaveError("Could not finish workout.");
         }
     }
 
@@ -379,7 +401,11 @@ export default function WorkoutsBuilderPage() {
                         <input
                             className="wbTitleInput"
                             value={workoutName}
-                            onChange={(e) => setWorkoutName(e.target.value)}
+                            onChange={(e) => {
+                                setWorkoutName(e.target.value);
+                                setSaveError("");
+                                setSaveSucces("");
+                            }}
                             placeholder="Workout Name"
                         />
                     </div>
@@ -406,6 +432,19 @@ export default function WorkoutsBuilderPage() {
                             aria-label="Dismiss"
                         >
                             X
+                        </button>
+                    </div>
+                )}
+
+                {saveSucces && (
+                    <div className="saveSuccesbanner">
+                        <span>{saveSucces}</span>
+                        <button
+                        className="saveSuccessClose"
+                        onClick={() => setSaveSucces("")}
+                        aria-label="Dismiss"
+                        >
+                            X   
                         </button>
                     </div>
                 )}
