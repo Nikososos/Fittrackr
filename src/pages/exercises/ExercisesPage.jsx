@@ -110,6 +110,13 @@ export default function ExercisesPage() {
                 setAddError(`"${selectedExercise.name}" is already in "${workout.title}".`);
                 return;
             }
+
+            // Add exercise with 3 default empty sets
+            const defaultSets = JSON.stringify([
+                { weight: 0, reps: 0 },
+                { weight: 0, reps: 0 },
+                { weight: 0, reps: 0 },
+            ]);
         }
     }
 
