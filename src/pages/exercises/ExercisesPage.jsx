@@ -53,6 +53,7 @@ export default function ExercisesPage() {
     // Delete State (Admin Only)
     const [isDeleting, setIsDeleting] = useState(false);
     const [deleteError, setDeleteError] = useState("");
+     const [showDeleteModal, setShowDeleteModal] = useState(false);
 
     // workout dropdown state
     const [workouts, setWorkouts] = useState([]);
@@ -169,14 +170,12 @@ export default function ExercisesPage() {
     }
 
     // Handle delete exercise (admin Only)
-    async function handleDeleteExercise() {
-        if (!selectedExercise) return;
+    function handleDeleteExercise() {
+        setShowDeleteModal(true);
+    }
 
-        const confirmed = window.confirm(
-            `Are you sure you want to delete "${selectedExercise.name}"? This cannot be undone.`
-        );
-        if (!confirmed) return;
-
+    async function confirmDeleteExercise() {
+        setShowDeleteModal(false);
         try {
             setIsDeleting(true);
             setDeleteError("");
@@ -333,7 +332,7 @@ export default function ExercisesPage() {
                                     />
 
                                     <label className="formLabel" htmlFor="exInstruction">Insturctions</label>
-                                    <input
+                                    <textarea
                                         id="exInstructions"
                                         className="formInput formTextarea"
                                         placeholder="Describe the steps to perform this exercise."
@@ -395,7 +394,7 @@ export default function ExercisesPage() {
                                     </button>
                                 </div>
                             )}
-                             
+
                             <div className="meta">
                                 <strong>Equipment:</strong> {selectedExercise.equipment}
                             </div>
@@ -519,6 +518,34 @@ export default function ExercisesPage() {
                     </div>
                 </ExerciseBrowserPanel>
             </div>
+
+            {/* Delete confirmation modal */}
+            {showDeleteModal && (
+                <div className="modalOverlay">
+                    <div className="modalCard">
+                        <h3 className="modalTitle">Delete exercise</h3>
+                        <p className="modalText">
+                            Are you sure you want to delete <strong>"{selectedExercise?.name}"</strong>? This cannot be undone.
+                        </p>
+                        <div className="modalActions">
+                            <button
+                                className="modalCancelBtn"
+                                type="button"
+                                onClick={() => setShowDeleteModal(false)}
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                className="modalDeleteBtn"
+                                type="button"
+                                onClick={confirmDeleteExercise}
+                            >
+                                Delete
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </AppLayout>
     );
 }
