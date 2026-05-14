@@ -4,7 +4,7 @@ import ExerciseBrowserPanel from "../../components/exercises/ExerciseBrowserPane
 import ExerciseFilters from "../../components/exercises/ExerciseFilters";
 import ExerciseBrowserItem from "../../components/exercises/ExerciseBrowserItem";
 import { useAuth } from "../../context/AuthContext";
-import { getExercises } from "../../api/exercisesApi";
+import { createExercise, getExercises } from "../../api/exercisesApi";
 import { getWorkouts } from "../../api/workoutsApi";
 import { getWorkoutExercises, createWorkoutExercise } from "../../api/workoutExercisesApi";
 import "./ExercisesPage.css";
@@ -33,7 +33,7 @@ function normalizeExercise(apiItem) {
 export default function ExercisesPage() {
     const { token, userId } = useAuth();
 
-    const [exercises, setExcercises] = useState([]);
+    const [exercises, setExercises] = useState([]);
     const [selectedId, setSelectedId] = useState(null);
     const [isAdmin, setIsAdmin] = useState(false);
 
@@ -138,6 +138,29 @@ export default function ExercisesPage() {
         if (!name || !equipment || !targetMuscle || !instruction) {
             setFormError("Please fill in all fields");
             return;
+        }
+
+        try {
+            setIsSaving(true);
+
+            const created = await createExercise({
+                token,
+                exercise: { name, equipment, targetMuscle, instruction },
+            });
+        
+            // Add new exercise to the list and select it
+            const normalized = normalizeExercise(created);
+            setExercises((prev) => [...prev, normalized]);
+            setSelectedId(normalized.id);
+
+            setForm(emptyForm);
+            setFormSucces(`"${name}" has been added succesfully`):
+            setShowAddForm(false);
+        } catch (e) {
+            console.error(e):
+            setFormError("Could not create exercise. Please try again.");
+        } finally {
+            setIsSaving(false);
         }
     }
 
