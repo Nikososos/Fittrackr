@@ -66,7 +66,7 @@ export default function ExercisesPage() {
                 const data = await getExercises({token});
                 const list = Array.isArray(data) ? data : data?.data || [];
                 const normalized = list.map(normalizeExercise);
-                setExcercises(normalized);
+                setExercises(normalized);
 
                 //set default selection to first item if nothing is selected yet
                 if (!selectedId && normalized.length > 0) {
@@ -154,14 +154,19 @@ export default function ExercisesPage() {
             setSelectedId(normalized.id);
 
             setForm(emptyForm);
-            setFormSucces(`"${name}" has been added succesfully`):
+            setFormSucces(`"${name}" has been added succesfully`);
             setShowAddForm(false);
         } catch (e) {
-            console.error(e):
+            console.error(e);
             setFormError("Could not create exercise. Please try again.");
         } finally {
             setIsSaving(false);
         }
+    }
+
+    function handleFormChange(field, value) {
+        setFormError("");
+        setForm((prev) => ({ ...prev, [field]: value}));
     }
 
     async function handleAddToWorkout(workout) {
