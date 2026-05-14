@@ -4,7 +4,7 @@ import ExerciseBrowserPanel from "../../components/exercises/ExerciseBrowserPane
 import ExerciseFilters from "../../components/exercises/ExerciseFilters";
 import ExerciseBrowserItem from "../../components/exercises/ExerciseBrowserItem";
 import { useAuth } from "../../context/AuthContext";
-import { createExercise, getExercises } from "../../api/exercisesApi";
+import { createExercise, deleteExercise, getExercises } from "../../api/exercisesApi";
 import { getWorkouts } from "../../api/workoutsApi";
 import { getWorkoutExercises, createWorkoutExercise } from "../../api/workoutExercisesApi";
 import "./ExercisesPage.css";
@@ -49,6 +49,10 @@ export default function ExercisesPage() {
     const [formError, setFormError] = useState("");
     const [formSucces, setFormSucces] = useState("");
     const [isSaving, setIsSaving] = useState(false);
+
+    // Delete State (Admin Only)
+    const [isDeleting, setIsDeleting] = useState(false);
+    const [deleteError, setDeleteError] = useState("");
 
     // workout dropdown state
     const [workouts, setWorkouts] = useState([]);
