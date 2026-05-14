@@ -178,9 +178,23 @@ export default function ExercisesPage() {
                                             )}
                                         </div>
                                     )}
-                            </div>
+                                </div>
 
-                            
+                                {addSucces && (
+                                    <div className="addSuccesBanner">
+                                        <span>{addSucces}</span>
+                                        <button
+                                            className="addBannerClose"
+                                            onClick={() => setAddSucces("")}
+                                            aria-label="Dismiss"
+                                        >
+                                            X
+                                        </button>
+                                    </div>
+                                )}
+
+                                
+                            </div>
                         </>
                        )
                     )}
