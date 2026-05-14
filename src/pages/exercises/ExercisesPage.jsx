@@ -84,6 +84,30 @@ export default function ExercisesPage() {
         loadWorkouts();
     },  [token]);
 
+    // Close dropwdown when selected exercise changes
+    useEffect(() => {
+        setShowWorkoutDropdown(false);
+        setAddSucces("");
+        setAddError("");
+    },  [selectedId]);
+
+    async function handleAddToWorkout(workout) {
+        setAddSucces("");
+        setAddError("");
+        setShowWorkoutDropdown(false)
+
+        try {
+            // Check if exercise is already in this workout
+            const allWe = await getWorkoutExercises({ token });
+            const weList = Array.isArray(allWe) ? allWe : allWe?.data || [];
+            const alreadyAdded = weList.some(
+                (we) =>
+                    String(we.workoutId) === String(workout.id) &&
+                String(we.excerciseId) === String(selectedExercise.id)
+            );
+        }
+    }
+
     const muscleOptions = useMemo (() => {
         const set = new Set(DEFAULT_MUSCLE_GROUPS);
         exercises.forEach((ex) => ex.muscleGroups.forEach((m) => set.add(m)));
