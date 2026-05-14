@@ -1,9 +1,16 @@
 import { useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import { noviFetch } from "../../api/noviClient";
-import "/RegisterPage.css";
+import "./RegisterPage.css";
 
 export default function RegisterPage() {
+    const navigate = useNavigate();
+
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
+    const [error, setError] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
     return (
         <div className="loginPage">
             <div className="loginCard" role="dialog" aria-label="Register">
