@@ -193,6 +193,26 @@ export default function ExercisesPage() {
             <div className="exercisesPage">
                 <div className="exDetail">
 
+                    {/* Admin: add excercise button + form */}
+                    {isAdmin && (
+                        <div className="adminExerciseSection">
+                            <button
+                                className="primaryBtn adminAddBtn"
+                                type="button"
+                                onClick={() => {
+                                    setShowAddForm((prev) => !prev);
+                                    setFormError("");
+                                    setFormSucces("");
+                                    setForm(emptyForm);
+                                }}
+                            >
+                                {showAddForm ? "Cancel" : "+ Add new exercise"}
+                            </button>
+
+                            
+                        </div>
+                    )}
+
                     {isLoading && <div>Loading exercises...</div>}
                     {error && <div className="errorbanner">{error}</div>}
                     
