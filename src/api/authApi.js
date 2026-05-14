@@ -6,10 +6,3 @@ export function loginRequest({ email, password }) {
         body: { email, password },
     });
 }
-
-export function registerRequest ({ email, password }) {
-    return noviFetch("/api/register", {
-        method: "POST",
-        body: { email, password},
-    });
-}
