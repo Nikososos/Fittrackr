@@ -123,6 +123,24 @@ export default function ExercisesPage() {
         setAddError("");
     },  [selectedId]);
 
+    // Handle add exercise form submit (admin only)
+
+    async function handleCreateExercise(e) {
+        e.preventDefault();
+        setFormError("");
+        setFormSucces("");
+
+        const name = form.name.trim();
+        const equipment = form.equipment.trim();
+        const targetMuscle = form.targetMuscle.trim();
+        const instruction = form.instruction.trim();
+
+        if (!name || !equipment || !targetMuscle || !instruction) {
+            setFormError("Please fill in all fields");
+            return;
+        }
+    }
+
     async function handleAddToWorkout(workout) {
         setAddSucces("");
         setAddError("");
