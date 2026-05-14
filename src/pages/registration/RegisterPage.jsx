@@ -11,6 +11,58 @@ export default function RegisterPage() {
     const [confirmPassword, setConfirmPassword] = useState("");
     const [error, setError] = useState("");
     const [isLoading, setIsLoading] = useState(false);
+
+    async function handleSubmit(e) {
+        e.preventDefault();
+        setError("")
+
+        const emailNormalized = email.trim().toLowerCase();
+        const passwordNormalized = password.trim();
+        const confirmNormalized = confirmPassword.trim();
+
+        //* checks if all fields are filledin
+        if (!emailNormalized || !passwordNormalized || !confirmNormalized) {
+            setError("Please fill in all fields.");
+            return;
+        }
+
+        //* Checks if password and verify password fields are the same
+        if (passwordNormalized !== confirmNormalized) {
+            setError("Passwords do not match.");
+            return;
+        }
+
+        //* Checks if password is correct length
+        if (passwordNormalized.length < 6) {
+            setError("Password must be at least 6 characters.");
+            return;
+        }
+
+        try {
+            setIsLoading(true);
+
+            await noviFetch("/api/register", {
+                method: "POST",
+                body: {
+                    email: emailNormalized,
+                    password: passwordNormalized,
+                },
+            });
+
+            navigate("/login");
+        } catch (err) {
+            console.error("REGISTER ERROR:", err);
+            const message = err?.message || "";
+            if (message.toLowerCase().includes("already")) {
+                setError("This email address is already in use.");
+            } else {
+                setError("Registration failed. Please try again.");
+            }
+        } finally {
+            setIsLoading(false);
+        }
+    }
+        
     return (
         <div className="loginPage">
             <div className="loginCard" role="dialog" aria-label="Register">
