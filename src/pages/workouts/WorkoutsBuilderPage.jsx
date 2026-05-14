@@ -35,6 +35,7 @@ export default function WorkoutsBuilderPage() {
     const [workoutExercises, setWorkoutExercises] = useState([]);
     const [exerciseLibrary, setExerciseLibrary] = useState([]);
     const [saveError, setSaveError] = useState("");
+    const [saveSucces, setSaveSucces] = useState("");
 
     const muscleGroupOptions = useMemo(() => {
         const unique = Array.from(
@@ -235,7 +236,9 @@ export default function WorkoutsBuilderPage() {
     
     // save workout with changes made
     async function handleSave() {
-        console.log("HANDLE SAVE CALLED");
+
+        setSaveError("");
+        setSaveSucces("");
 
         // Validate at least one exercise required
         if (workoutExercises.length === 0) {
@@ -260,8 +263,6 @@ export default function WorkoutsBuilderPage() {
         } catch (e) {
             console.error("Could not check for duplicate workouts names", e);
         }
-
-        setSaveError("")
 
         try {
             const title = titleToCheck;
@@ -320,10 +321,10 @@ export default function WorkoutsBuilderPage() {
                 }
             }
             console.log("Save Workout Payload", { id, title, excercises: workoutExercises });
-            alert("Workout saved!");
-        }   catch (e) {
+            setSaveSucces(`Workout "${title}" saved succesfully!`);
+        }  catch (e) {
             console.error(e);
-            alert("Could not save workout.")
+            setSaveError("Could not save workout.")
         }
     }
 
