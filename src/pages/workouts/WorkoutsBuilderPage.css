@@ -159,3 +159,31 @@
   gap: 10px;
   padding-right: 6px;
 }
+
+
+.saveErrorBanner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(239, 68, 68, 0.12);
+    border: 1px solid rgba(239, 68, 68, 0.4);
+    color: #ef4444;
+    padding: 12px 16px;
+    border-radius: 10px;
+    margin-bottom: 16px;
+    font-weight: 500;
+}
+ 
+.saveErrorClose {
+    background: none;
+    border: none;
+    color: #ef4444;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 0 0 0 12px;
+    line-height: 1;
+}
+ 
+.saveErrorClose:hover {
+    opacity: 0.7;
+}
