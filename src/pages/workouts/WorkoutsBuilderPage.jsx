@@ -246,6 +246,11 @@ export default function WorkoutsBuilderPage() {
             return;
         }
 
+        if (!workoutName.trim()) {
+            setSaveError("Please enter a name for your workout.");
+            return;
+        }
+
         // Validate no duplicate workout name
         const titleToCheck = workoutName.trim() || "New Workout";
         try {
@@ -253,6 +258,7 @@ export default function WorkoutsBuilderPage() {
             const workoutList = Array.isArray(allWorkouts) ? allWorkouts : allWorkouts?.data || [];
             const duplicate = workoutList.find(
                 (w) =>
+                    String(w.userId) === String(userId) &&
                     w.title.trim().toLowerCase() === titleToCheck.toLowerCase() &&
                     String(w.id) !== String(id)
             );

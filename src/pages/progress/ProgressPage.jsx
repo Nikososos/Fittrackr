@@ -63,8 +63,16 @@ export default function ProgressPage() {
                 const wList = Array.isArray(wRes) ? wRes : wRes?.data || [];
                 const eList = Array.isArray(eRes) ? eRes : eRes?.data || [];
 
-                setCompletions(cList);
-                setWorkouts(wList);
+                // Filter completions and workouts to only show current user's data
+                const myCompletions = cList.filter(
+                    (c) => String(c.userId) === String(userId)
+                );
+                const myWorkouts = wList.filter(
+                    (w) => String(w.userId) === String(userId)
+                );
+
+                setCompletions(myCompletions);
+                setWorkouts(myWorkouts);
                 setExercises(eList);
             }   catch (e) {
                 console.error(e);
