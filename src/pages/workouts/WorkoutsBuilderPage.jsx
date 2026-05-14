@@ -253,6 +253,7 @@ export default function WorkoutsBuilderPage() {
             const workoutList = Array.isArray(allWorkouts) ? allWorkouts : allWorkouts?.data || [];
             const duplicate = workoutList.find(
                 (w) =>
+                    String(w.userId) === String(userId) &&
                     w.title.trim().toLowerCase() === titleToCheck.toLowerCase() &&
                     String(w.id) !== String(id)
             );
