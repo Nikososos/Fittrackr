@@ -210,11 +210,23 @@
     padding: 20px;
 }
 
+.exerciseTitleRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 14px;
+}
+
 .addExerciseTitle {
     font-size: 18px;
     font-weight: 800;
     color: #2563eb;
     margin-bottom: 4px;
+}
+
+.exerciseTitlerow .exerciseTitle {
+    margin-top: 0;
 }
 
 .formLabel {
@@ -244,4 +256,3 @@
     padding: 10px 12px;
     resize: vertical;
 }
-
