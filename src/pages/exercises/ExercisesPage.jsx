@@ -209,7 +209,18 @@ export default function ExercisesPage() {
                                 {showAddForm ? "Cancel" : "+ Add new exercise"}
                             </button>
 
-                            
+                            {formSucces && (
+                                <div className="addSuccesBanner">
+                                    <span>{formSucces}</span>
+                                    <button
+                                        className="addBannerClose"
+                                        onClick={() => setFormSucces("")}
+                                        aria-label="Dismiss"
+                                    >
+                                        X
+                                    </button>
+                                </div>
+                            )}
                         </div>
                     )}
 
