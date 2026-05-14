@@ -168,6 +168,17 @@ export default function ExercisesPage() {
         }
     }
 
+    // Handle delete exercise (admin Only)
+    async function handleDeleteExercise() {
+        if (!selectedExercise) return;
+
+        const confirmed = window.confirm(
+            `Are you sure you want to delete "${selectedExercise.name}"? This cannot be undone.`
+        );
+        if (!confirmed) return;
+
+        
+    }
     function handleFormChange(field, value) {
         setFormError("");
         setForm((prev) => ({ ...prev, [field]: value}));
