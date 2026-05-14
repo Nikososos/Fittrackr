@@ -114,7 +114,7 @@ export default function RegisterPage() {
                         <button
                             className="btnSecondary"
                             type="button"
-                            onClick={() => Navigate("/login")}
+                            onClick={() => navigate("/login")}
                         >
                             Back to login
                         </button>
