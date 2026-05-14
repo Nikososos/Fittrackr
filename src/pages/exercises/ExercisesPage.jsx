@@ -5,6 +5,8 @@ import ExerciseFilters from "../../components/exercises/ExerciseFilters";
 import ExerciseBrowserItem from "../../components/exercises/ExerciseBrowserItem";
 import { useAuth } from "../../context/AuthContext";
 import { getExercises } from "../../api/exercisesApi";
+import { getWorkouts } from "../../api/workoutsApi";
+import { getWorkoutExercises, createWorkoutExercise } from "../../api/workoutExercisesApi";
 import "./ExercisesPage.css";
 
 const DEFAULT_MUSCLE_GROUPS = ["All", "Chest", "Back", "Shoulders", "Biceps", "Triceps"];
@@ -22,7 +24,7 @@ function normalizeExercise(apiItem) {
     };
 }
 export default function ExercisesPage() {
-    const { token } = useAuth();
+    const { token, userId } = useAuth();
 
     const [exercises, setExcercises] = useState([]);
     const [selectedId, setSelectedId] = useState(null);
@@ -32,6 +34,12 @@ export default function ExercisesPage() {
 
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState("");
+
+    // workout dropdown state
+    const [workouts, setWorkouts] = useState([]);
+    const [showWorkoutDropdown, setShowWorkoutDropdown] = useState(false);
+    const [addSucces, setAddSucces] = useState("");
+    const [addError, setAddError] = useState("");
 
     // Load excercises from backend
     useEffect (() => {
