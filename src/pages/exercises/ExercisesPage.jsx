@@ -105,6 +105,11 @@ export default function ExercisesPage() {
                     String(we.workoutId) === String(workout.id) &&
                 String(we.excerciseId) === String(selectedExercise.id)
             );
+
+            if (alreadyAdded) {
+                setAddError(`"${selectedExercise.name}" is already in "${workout.title}".`);
+                return;
+            }
         }
     }
 
