@@ -383,6 +383,19 @@ export default function ExercisesPage() {
                                 )}
                             </div>
 
+                            {deleteError && (
+                                <div className="addErrorBanner">
+                                    <span>{deleteError}</span>
+                                    <button
+                                        className="addBannerClose"
+                                        onClick={() => setDeleteError("")}
+                                        aria-label="Dismiss"
+                                    >
+                                        X
+                                    </button>
+                                </div>
+                            )}
+                             
                             <div className="meta">
                                 <strong>Equipment:</strong> {selectedExercise.equipment}
                             </div>
