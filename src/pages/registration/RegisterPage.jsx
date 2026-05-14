@@ -79,7 +79,7 @@ export default function RegisterPage() {
                         placeholder="name@email.com"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        autocomplete="email"
+                        autoComplete="email"
                     />
 
                     <label className="fieldLabel" htmlFor="password">
@@ -92,7 +92,7 @@ export default function RegisterPage() {
                         placeholder="*******"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        autocomplete="new-password"
+                        autoComplete="new-password"
                     />
 
                     <label className="fieldLabel" htmlFor="confirmPassword">
@@ -104,8 +104,8 @@ export default function RegisterPage() {
                         type="password"
                         placeholder="*******"
                         value={confirmPassword}
-                        onChange={(e) => setEmail(e.target.value)}
-                        autocomplete="new-password"
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        autoComplete="new-password"
                     />
 
                     {error && <div className="errobanner">{error}</div>}
