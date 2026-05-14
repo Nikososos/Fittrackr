@@ -70,6 +70,19 @@ export default function ExercisesPage() {
     }, [token]);
 
     // Load workouts for dropdown
+    useEffect(() => {
+        async function loadWorkouts() {
+            try {
+                const data = await getWorkouts( {token });
+                const list = Array.isArray(data) ? data : data?.data || [];
+                setWorkouts(list);
+            } catch (e) {
+                console.error("Could not load workouts", e);
+            }
+        }
+
+        loadWorkouts();
+    },  [token]);
 
     const muscleOptions = useMemo (() => {
         const set = new Set(DEFAULT_MUSCLE_GROUPS);
