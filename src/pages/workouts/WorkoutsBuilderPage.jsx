@@ -243,10 +243,28 @@ export default function WorkoutsBuilderPage() {
             return;
         }
 
+        // Validate no duplicate workout name
+        const titleToCheck = workoutName.trim() || "New Workout";
+        try {
+            const allWorkouts = await getWorkouts({ token })
+            const workoutList = Array.isArray(allWorkouts) ? allWorkouts : allWorkouts?.data || [];
+            const duplicate = workoutList.find(
+                (w) =>
+                    w.title.trim().toLowerCase() === titleToCheck.toLowerCase() &&
+                    String(w.id) !== String(id)
+            );
+            if (duplicate) {
+                setSaveError(`A workout named "${titleToCheck}" already exists. Please choose a different name`);
+                return
+            }
+        } catch (e) {
+            console.error("Could not check for duplicate workouts names", e);
+        }
+
         setSaveError("")
 
         try {
-            const title = workoutName.trim() || "New workout";
+            const title = titleToCheck;
             const isExistingWorkout = Boolean(id);
             const workoutId = await ensureWorkoutExists();
 
