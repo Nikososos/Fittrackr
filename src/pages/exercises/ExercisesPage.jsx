@@ -221,6 +221,51 @@ export default function ExercisesPage() {
                                     </button>
                                 </div>
                             )}
+
+                            {showAddForm && (
+                                <form className="AddExerciseForm" onSubmit={handleCreateExercise}>
+                                    <h3 className="addExerciseTitle">New exercise</h3>
+
+                                    <label className="formLabel" htmlFor="exName">Name</label>
+                                    <input
+                                        id="exName"
+                                        className="formInput"
+                                        type="text"
+                                        placeholder="e.g. Bench Press"
+                                        value={form.name}
+                                        onChange={(e) => handleFormChange("name", e.target.value)}
+                                    />
+
+                                    <label className="formLabel" htmlFor="exEquipment">Equipment</label>
+                                    <input
+                                        id="exEquipment"
+                                        className="formInput"
+                                        type="text"
+                                        placeholder="e.g. Barbell"
+                                        value={form.equipment}
+                                        onChange={(e) => handleFormChange("equipment", e.target.value)}
+                                    />
+
+                                    <label className="formLabel" htmlFor="exMuscle">Muscle group</label>
+                                    <input
+                                        id="exMuscle"
+                                        className="formInput"
+                                        type="text"
+                                        placeholder="e.g. Chest"
+                                        value={form.targetMuscle}
+                                        onChange={(e) => handleFormChange("targetMuscle", e.target.value)}
+                                    />
+
+                                    <label className="formLabel" htmlFor="exInstruction">Insturctions</label>
+                                    <input
+                                        id="exInstructions"
+                                        className="formInput formTextarea"
+                                        placeholder="Describe the steps to perform this exercise."
+                                        value={form.instruction}
+                                        onChange={(e) => handleFormChange("instruction", e.target.value)}
+                                    />
+                                </form>
+                            )}
                         </div>
                     )}
 
