@@ -4,7 +4,7 @@ import ExerciseBrowserPanel from "../../components/exercises/ExerciseBrowserPane
 import ExerciseFilters from "../../components/exercises/ExerciseFilters";
 import ExerciseBrowserItem from "../../components/exercises/ExerciseBrowserItem";
 import { useAuth } from "../../context/AuthContext";
-import { createExercise, getExercises } from "../../api/exercisesApi";
+import { createExercise, deleteExercise, getExercises } from "../../api/exercisesApi";
 import { getWorkouts } from "../../api/workoutsApi";
 import { getWorkoutExercises, createWorkoutExercise } from "../../api/workoutExercisesApi";
 import "./ExercisesPage.css";
@@ -49,6 +49,10 @@ export default function ExercisesPage() {
     const [formError, setFormError] = useState("");
     const [formSucces, setFormSucces] = useState("");
     const [isSaving, setIsSaving] = useState(false);
+
+    // Delete State (Admin Only)
+    const [isDeleting, setIsDeleting] = useState(false);
+    const [deleteError, setDeleteError] = useState("");
 
     // workout dropdown state
     const [workouts, setWorkouts] = useState([]);
@@ -164,6 +168,32 @@ export default function ExercisesPage() {
         }
     }
 
+    // Handle delete exercise (admin Only)
+    async function handleDeleteExercise() {
+        if (!selectedExercise) return;
+
+        const confirmed = window.confirm(
+            `Are you sure you want to delete "${selectedExercise.name}"? This cannot be undone.`
+        );
+        if (!confirmed) return;
+
+        try {
+            setIsDeleting(true);
+            setDeleteError("");
+
+            await deleteExercise({ token, id: selectedExercise.id });
+
+            const remaining = exercises.filter((e) => e.id !== selectedExercise.id);
+            setExercises(remaining);
+            setSelectedId(remaining.length > 0 ? remaining[0].id : null);
+        } catch (e) {
+            console.error(e);
+            setDeleteError("Could not delete exercise. Please try again")
+        } finally {
+            setIsDeleting(false);
+        }
+        
+    }
     function handleFormChange(field, value) {
         setFormError("");
         setForm((prev) => ({ ...prev, [field]: value}));
@@ -339,8 +369,33 @@ export default function ExercisesPage() {
                        !error &&
                        selectedExercise && (             
                         <>
-                            <h2 className="exerciseTitle">{selectedExercise.name}</h2>
+                            <div>
+                                <h2 className="exerciseTitle">{selectedExercise.name}</h2>
+                                {isAdmin && (
+                                    <button
+                                        className="deleteExerciseBtn"
+                                        type="button"
+                                        onClick={handleDeleteExercise}
+                                        disabled={isDeleting}
+                                    >
+                                        {isDeleting ? "Deleting..." : "Delete exercise"}
+                                    </button>
+                                )}
+                            </div>
 
+                            {deleteError && (
+                                <div className="addErrorBanner">
+                                    <span>{deleteError}</span>
+                                    <button
+                                        className="addBannerClose"
+                                        onClick={() => setDeleteError("")}
+                                        aria-label="Dismiss"
+                                    >
+                                        X
+                                    </button>
+                                </div>
+                            )}
+                             
                             <div className="meta">
                                 <strong>Equipment:</strong> {selectedExercise.equipment}
                             </div>
