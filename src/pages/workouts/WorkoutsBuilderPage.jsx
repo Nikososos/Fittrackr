@@ -329,6 +329,9 @@ export default function WorkoutsBuilderPage() {
     }
 
     async function handleFinishWorkout() {
+        setSaveError("");
+        setSaveSucces("");
+
         try {
             if (!workoutExercises.length) {
                 setSaveError("You need to add at least one exercise before finishing the workout.");
@@ -344,7 +347,7 @@ export default function WorkoutsBuilderPage() {
                     const reps = Number(s.reps);
 
                     if (!weight || !reps) {
-                        alert("All sets must have weight and reps greater than 0");
+                        setSaveError("All sets must have weight and reps greater than 0");
                         return;
                     }
                 }
@@ -375,12 +378,12 @@ export default function WorkoutsBuilderPage() {
 
             await createWorkoutCompletion( { token, completion });
 
-            alert("workout finished! Logged in progress.");
-            navigate("/progress");
+            setSaveSucces("workout finished! Logged in progress.");
+            setTimeout(() => navigate("/progress"), 1500);
 
-        }   catch (e) {
+        }  catch (e) {
             console.error(e);
-            alert("Could not finish workout.");
+            setSaveError("Could not finish workout.");
         }
     }
 
@@ -398,7 +401,11 @@ export default function WorkoutsBuilderPage() {
                         <input
                             className="wbTitleInput"
                             value={workoutName}
-                            onChange={(e) => setWorkoutName(e.target.value)}
+                            onChange={(e) => {
+                                setWorkoutName(e.target.value);
+                                setSaveError("");
+                                setSaveSucces("");
+                            }}
                             placeholder="Workout Name"
                         />
                     </div>
@@ -425,6 +432,19 @@ export default function WorkoutsBuilderPage() {
                             aria-label="Dismiss"
                         >
                             X
+                        </button>
+                    </div>
+                )}
+
+                {saveSucces && (
+                    <div className="saveSuccesbanner">
+                        <span>{saveSucces}</span>
+                        <button
+                        className="saveSuccessClose"
+                        onClick={() => setSaveSucces("")}
+                        aria-label="Dismiss"
+                        >
+                            X   
                         </button>
                     </div>
                 )}
