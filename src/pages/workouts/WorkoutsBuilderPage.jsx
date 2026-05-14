@@ -246,6 +246,11 @@ export default function WorkoutsBuilderPage() {
             return;
         }
 
+        if (!workoutName.trim()) {
+            setSaveError("Please enter a name for your workout.");
+            return;
+        }
+
         // Validate no duplicate workout name
         const titleToCheck = workoutName.trim() || "New Workout";
         try {
