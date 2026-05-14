@@ -264,6 +264,20 @@ export default function ExercisesPage() {
                                         value={form.instruction}
                                         onChange={(e) => handleFormChange("instruction", e.target.value)}
                                     />
+
+                                    {formError && (
+                                        <div className="addErrorBanner">
+                                            <span>{formError}</span>
+                                        </div>
+                                    )}
+
+                                    <button
+                                        className="primaryBtn"
+                                        type="submit"
+                                        disabled={isSaving}
+                                    >
+                                        {isSaving ? "Saving..." : "Save exercise"}
+                                    </button>
                                 </form>
                             )}
                         </div>
