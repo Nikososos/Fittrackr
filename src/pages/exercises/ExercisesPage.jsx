@@ -157,8 +157,30 @@ export default function ExercisesPage() {
                                     >
                                         Add to workout
                                     </button>
-                                </div>
+
+                                    {showWorkoutDropdown && (
+                                        <div className="workoutDropdown">
+                                            {workouts.length === 0 ? (
+                                                <div className="workoutDropdownEmpty">
+                                                    No workouts found. Create one first.
+                                                </div>
+                                            ) : (
+                                                workouts.map((w) => (
+                                                    <button
+                                                        key={w.id}
+                                                        className="workoutDropdownItem"
+                                                        type="button"
+                                                        onClick={() => handleAddToWorkout(w)}
+                                                    >
+                                                        {w.title}
+                                                    </button>
+                                                ))
+                                            )}
+                                        </div>
+                                    )}
                             </div>
+
+                            
                         </>
                        )
                     )}
