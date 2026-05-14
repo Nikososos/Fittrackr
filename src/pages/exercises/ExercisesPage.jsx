@@ -369,7 +369,19 @@ export default function ExercisesPage() {
                        !error &&
                        selectedExercise && (             
                         <>
-                            <h2 className="exerciseTitle">{selectedExercise.name}</h2>
+                            <div>
+                                <h2 className="exerciseTitle">{selectedExercise.name}</h2>
+                                {isAdmin && (
+                                    <button
+                                        className="deleteExerciseBtn"
+                                        type="button"
+                                        onClick={handleDeleteExercise}
+                                        disabled={isDeleting}
+                                    >
+                                        {isDeleting ? "Deleting..." : "Delete exercise"}
+                                    </button>
+                                )}
+                            </div>
 
                             <div className="meta">
                                 <strong>Equipment:</strong> {selectedExercise.equipment}
