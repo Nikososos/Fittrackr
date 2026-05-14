@@ -11,6 +11,13 @@ import "./ExercisesPage.css";
 
 const DEFAULT_MUSCLE_GROUPS = ["All", "Chest", "Back", "Shoulders", "Biceps", "Triceps"];
 
+const emptyForm = {
+    name: "",
+    equipment: "",
+    targetMuscle: "",
+    instruction: "",
+};
+
 function normalizeExercise(apiItem) {
     return {
         id: String(apiItem.id),
@@ -34,6 +41,13 @@ export default function ExercisesPage() {
 
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState("");
+
+    // Add exercise form state (admin only)
+    const [showAddForm, setShowAddForm] = useState(false);
+    const [form, setForm] = useState(emptyForm);
+    const [formError, setFormError] = useState("");
+    const [formSucces, setFormSucces] = useState("");
+    const [isSaving, setIsSaving] = useState(false);
 
     // workout dropdown state
     const [workouts, setWorkouts] = useState([]);
