@@ -177,6 +177,21 @@ export default function ExercisesPage() {
         );
         if (!confirmed) return;
 
+        try {
+            setIsDeleting(true);
+            setDeleteError("");
+
+            await deleteExercise({ token, id: selectedExercise.id });
+
+            const remaining = exercises.filter((e) => e.id !== selectedExercise.id);
+            setExercises(remaining);
+            setSelectedId(remaining.length > 0 ? remaining[0].id : null);
+        } catch (e) {
+            console.error(e);
+            setDeleteError("Could not delete exercise. Please try again")
+        } finally {
+            setIsDeleting(false);
+        }
         
     }
     function handleFormChange(field, value) {
