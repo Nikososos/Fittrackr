@@ -209,7 +209,7 @@ export default function WorkoutsBuilderPage() {
 
         }
 
-        const title = workoutName.trim() || "New Workout";
+        const title = workoutName.trim();
 
         const created = await createWorkout({
             token,
