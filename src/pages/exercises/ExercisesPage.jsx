@@ -5,6 +5,8 @@ import ExerciseFilters from "../../components/exercises/ExerciseFilters";
 import ExerciseBrowserItem from "../../components/exercises/ExerciseBrowserItem";
 import { useAuth } from "../../context/AuthContext";
 import { getExercises } from "../../api/exercisesApi";
+import { getWorkouts } from "../../api/workoutsApi";
+import { getWorkoutExercises, createWorkoutExercise } from "../../api/workoutExercisesApi";
 import "./ExercisesPage.css";
 
 const DEFAULT_MUSCLE_GROUPS = ["All", "Chest", "Back", "Shoulders", "Biceps", "Triceps"];
@@ -22,7 +24,7 @@ function normalizeExercise(apiItem) {
     };
 }
 export default function ExercisesPage() {
-    const { token } = useAuth();
+    const { token, userId } = useAuth();
 
     const [exercises, setExcercises] = useState([]);
     const [selectedId, setSelectedId] = useState(null);
@@ -33,6 +35,12 @@ export default function ExercisesPage() {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState("");
 
+    // workout dropdown state
+    const [workouts, setWorkouts] = useState([]);
+    const [showWorkoutDropdown, setShowWorkoutDropdown] = useState(false);
+    const [addSucces, setAddSucces] = useState("");
+    const [addError, setAddError] = useState("");
+
     // Load excercises from backend
     useEffect (() => {
         async function load() {
@@ -41,9 +49,7 @@ export default function ExercisesPage() {
                 setIsLoading(true);
 
                 const data = await getExercises({token});
-                
                 const list = Array.isArray(data) ? data : data?.data || [];
-
                 const normalized = list.map(normalizeExercise);
                 setExcercises(normalized);
 
@@ -63,13 +69,78 @@ export default function ExercisesPage() {
         load();
     }, [token]);
 
+    // Load workouts for dropdown
+    useEffect(() => {
+        async function loadWorkouts() {
+            try {
+                const data = await getWorkouts( {token });
+                const list = Array.isArray(data) ? data : data?.data || [];
+                setWorkouts(list);
+            } catch (e) {
+                console.error("Could not load workouts", e);
+            }
+        }
+
+        loadWorkouts();
+    },  [token]);
+
+    // Close dropwdown when selected exercise changes
+    useEffect(() => {
+        setShowWorkoutDropdown(false);
+        setAddSucces("");
+        setAddError("");
+    },  [selectedId]);
+
+    async function handleAddToWorkout(workout) {
+        setAddSucces("");
+        setAddError("");
+        setShowWorkoutDropdown(false)
+
+        try {
+            // Check if exercise is already in this workout
+            const allWE = await getWorkoutExercises({ token });
+            const weList = Array.isArray(allWE) ? allWE : allWE?.data || [];
+            const alreadyAdded = weList.some(
+                (we) =>
+                    Number(we.workoutId) === Number(workout.id) &&
+                    Number(we.exerciseId) === Number(selectedExercise.id)
+            );
+
+            if (alreadyAdded) {
+                setAddError(`"${selectedExercise.name}" is already in "${workout.title}".`);
+                return;
+            }
+
+            // Add exercise with 3 default empty sets
+            const defaultSets = JSON.stringify([
+                { weight: 0, reps: 0 },
+                { weight: 0, reps: 0 },
+                { weight: 0, reps: 0 },
+            ]);
+
+                await createWorkoutExercise({
+                token,
+                item: {
+                    workoutId: Number(workout.id),
+                    exerciseId: Number(selectedExercise.id),
+                    sets: defaultSets,
+                },
+            });
+
+            setAddSucces(`"${selectedExercise.name}" added to "${workout.title}"!`);
+        } catch (e) {
+            console.error(e);
+            setAddError("Could not add exercise to workout.");
+        }
+    }
+
     const muscleOptions = useMemo (() => {
         const set = new Set(DEFAULT_MUSCLE_GROUPS);
         exercises.forEach((ex) => ex.muscleGroups.forEach((m) => set.add(m)));
         return Array.from(set);
     }, [exercises]);
 
-
+    //* filtering excercises on the searchbar right panel
     const filteredExercises = useMemo(() => {
         return exercises.filter((ex) => {
             const matchesSearch =
@@ -133,6 +204,70 @@ export default function ExercisesPage() {
                                         ))}
                                     </ol>
                                 </div>
+                            </div>
+
+                            {/* add to workout */}
+                            <div className="addToWorkoutWrapper">
+                                <div className="addToWorkoutRow">
+                                    <button
+                                        className="primaryBtn"
+                                        type="button"
+                                        onClick={() => {
+                                            setAddSucces("")
+                                            setAddError("");
+                                            setShowWorkoutDropdown((prev) => !prev);
+                                        }}
+                                    >
+                                        Add to workout
+                                    </button>
+
+                                    {showWorkoutDropdown && (
+                                        <div className="workoutDropdown">
+                                            {workouts.length === 0 ? (
+                                                <div className="workoutDropdownEmpty">
+                                                    No workouts found. Create one first.
+                                                </div>
+                                            ) : (
+                                                workouts.map((w) => (
+                                                    <button
+                                                        key={w.id}
+                                                        className="workoutDropdownItem"
+                                                        type="button"
+                                                        onClick={() => handleAddToWorkout(w)}
+                                                    >
+                                                        {w.title}
+                                                    </button>
+                                                ))
+                                            )}
+                                        </div>
+                                    )}
+                                </div>
+
+                                {addSucces && (
+                                    <div className="addSuccesBanner">
+                                        <span>{addSucces}</span>
+                                        <button
+                                            className="addBannerClose"
+                                            onClick={() => setAddSucces("")}
+                                            aria-label="Dismiss"
+                                        >
+                                            X
+                                        </button>
+                                    </div>
+                                )}
+
+                                {addError && (
+                                    <div className="addErrorBanner">
+                                        <span>{addError}</span>
+                                        <button
+                                            className="addBannerClose"
+                                            onClick={() => setAddError("")}
+                                            aria-label="Dismiss"
+                                        >
+                                            X
+                                        </button>
+                                    </div>
+                                )}
                             </div>
                         </>
                        )
