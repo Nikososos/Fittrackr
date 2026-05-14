@@ -98,12 +98,12 @@ export default function ExercisesPage() {
 
         try {
             // Check if exercise is already in this workout
-            const allWe = await getWorkoutExercises({ token });
-            const weList = Array.isArray(allWe) ? allWe : allWe?.data || [];
+            const allWE = await getWorkoutExercises({ token });
+            const weList = Array.isArray(allWE) ? allWE : allWE?.data || [];
             const alreadyAdded = weList.some(
                 (we) =>
-                    String(we.workoutId) === String(workout.id) &&
-                String(we.excerciseId) === String(selectedExercise.id)
+                    Number(we.workoutId) === Number(workout.id) &&
+                    Number(we.exerciseId) === Number(selectedExercise.id)
             );
 
             if (alreadyAdded) {
@@ -117,6 +117,20 @@ export default function ExercisesPage() {
                 { weight: 0, reps: 0 },
                 { weight: 0, reps: 0 },
             ]);
+
+                await createWorkoutExercise({
+                token,
+                item: {
+                    workoutId: Number(workout.id),
+                    exerciseId: Number(selectedExercise.id),
+                    sets: defaultSets,
+                },
+            });
+
+            setAddSucces(`"${selectedExercise.name}" added to "${workout.title}"!`);
+        } catch (e) {
+            console.error(e);
+            setAddError("Could not add exercise to workout.");
         }
     }
 
@@ -126,7 +140,7 @@ export default function ExercisesPage() {
         return Array.from(set);
     }, [exercises]);
 
-
+    //* filtering excercises on the searchbar right panel
     const filteredExercises = useMemo(() => {
         return exercises.filter((ex) => {
             const matchesSearch =
